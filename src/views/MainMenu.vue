@@ -56,15 +56,15 @@ main{
     align-items: center;
     justify-content: center;
     width: 300px;
-    padding: 1rem;
+    padding: 0;
     margin: 5px;
     background-color: rgb(84, 134, 84);
     color: white;
     border: 2px solid;
     border-radius: 10px;   
     font-size: 1.25rem;   
-
 }
+
 
 .menu-option:hover{
     background-color: rgb(116, 177, 116);
@@ -74,6 +74,7 @@ main{
 .menu-option a{
     color: white;
     text-decoration: none;
+    padding: 1rem;
 }
 
 .menu-option .dropdown button {
@@ -82,23 +83,38 @@ main{
     outline: none;
     color: white;
     font: inherit;
-    width: inherit;
+    width: 300px;
     height: inherit;
+    padding: 1rem;
+
 }
 
 
 .dropdown-content {
-    position: absolute;
     display: flex;
     flex-direction: column;
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 500ms ease-in-out;
+    background-color: inherit;
+    width: 300px;
     
-    opacity: 0;
-    transition: opacity 400ms;
 }
 
-.active {
-    opacity: 1;
+.dropdown-content a {
+    padding: 1rem;
+    
 }
+
+.dropdown-content a:hover{
+    background-color: rgb(135, 192, 135);
+    border-radius: 10px;
+}
+.active {
+    max-height: 300px;
+}
+
 
 
 
