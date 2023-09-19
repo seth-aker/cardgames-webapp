@@ -6,7 +6,7 @@
                 <button type="button" class="collapsable" @click="toggleNewGameActive">New Game</button>
             
                 <div class="dropdown-content" :class="{active: newGameActive}">
-                    <a href="" >Matching</a>
+                    <router-link :to="{name: 'matching'}">Matching</router-link>
                     <a href="" >Blackjack</a>
                     <a href="" >Hearts</a>
                 </div>

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainMenu from '../views/MainMenu.vue'
-
+import MatchingGame from '@/views/MatchingGame.vue'
 const routes = [
   {
     path: '/',
@@ -8,12 +8,9 @@ const routes = [
     component: MainMenu
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/matching',
+    name: 'matching',
+    component: MatchingGame
   }
 ]
 

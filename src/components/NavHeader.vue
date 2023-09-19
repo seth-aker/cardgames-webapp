@@ -6,6 +6,7 @@
         </div>
         
         <nav id="links">
+            <router-link :to="{name: 'matching'}">Matching</router-link>
             <a href="#blackjack" @click.prevent="">Blackjack</a>
             <a href="#hearts" @click.prevent="" >Hearts</a>
             <router-link :to="{name: 'main-menu'}">Home</router-link>
