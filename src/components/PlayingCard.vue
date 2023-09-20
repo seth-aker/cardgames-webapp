@@ -35,8 +35,8 @@ img{
 }
 .card{
     background-color: transparent;
-    width: 200px;
-    height: 300px;
+    width: 10vw;
+    height: 200px;
     perspective: 1000px;
     margin: 0.5rem
 }

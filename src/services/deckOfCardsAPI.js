@@ -9,6 +9,6 @@ export default {
         return http.get('/new/shuffle/?deck_count=1');
     },
     drawCards(deckId) {
-        return http.get(`/${deckId}/draw/?count=1`);
+        return http.get(`/${deckId}/draw/?count=7`);
     }
 }

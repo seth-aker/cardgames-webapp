@@ -5,7 +5,7 @@
         <span><p>Turn Count: {{attempts}}</p></span>
       </aside>
       <main>
-        <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code"/>
+        <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" />
       </main>
   </div>
 </template>
@@ -37,9 +37,11 @@ export default {
   created() {
    deckOfCardsAPI.createDeck().then((resp) => {
       this.deckInfo = resp.data;
-      deckOfCardsAPI.drawCards(resp.data.deck_id, 21).then(response => {
-        response.data.cards.forEach(card => {
+      deckOfCardsAPI.drawCards(resp.data.deck_id).then(response => {
+        console.log(response.data.cards)
+        response.data.cards.forEach((card) => {
           this.cards.push(card);
+         
         });
       })
     });
@@ -58,11 +60,15 @@ export default {
     width: 300px;
     background-color:  rgb(116, 177, 116);
     border-radius: 0px 10px 10px 0px;
+    padding: 10px;
   }
 
   main{
     display: flex;
-    align-items: baseline;
+    flex-wrap: nowrap;
+    /* display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr; */
     flex-wrap: wrap;
     flex-basis: 100%;
   }
