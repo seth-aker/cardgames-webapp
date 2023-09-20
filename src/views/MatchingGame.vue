@@ -5,7 +5,7 @@
         <span><p>Turn Count: {{attempts}}</p></span>
       </aside>
       <main>
-        <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" />
+        <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
   </div>
 </template>
@@ -25,7 +25,7 @@ export default {
         shuffled: true,
         remaining: '',
       },
-      cards: []
+      
     }
   },
 
@@ -35,17 +35,22 @@ export default {
     }
   },
   created() {
-   deckOfCardsAPI.createDeck().then((resp) => {
+   deckOfCardsAPI.createMatchingDeck().then((resp) => {
       this.deckInfo = resp.data;
-      deckOfCardsAPI.drawCards(resp.data.deck_id).then(response => {
-        console.log(response.data.cards)
+      for(let i = 0; i < 24; i++ ) {
+        deckOfCardsAPI.drawCards(resp.data.deck_id).then(response => {
         response.data.cards.forEach((card) => {
-          this.cards.push(card);
-         
+          this.$store.commit("ADD_CARD", card);
         });
       })
+      } 
     });
     
+  },
+  computed: {
+    cards() {
+      return this.$store.state.cards;
+    }
   }
 }
 </script>
@@ -64,15 +69,16 @@ export default {
   }
 
   main{
-    display: flex;
-    flex-wrap: nowrap;
-    /* display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr; */
-    flex-wrap: wrap;
-    flex-basis: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr ;
+    grid-template-areas: "card0 card1 card2 card3 card4 card5 card6 card7"
+                         "card8 card9 card10 card11 card12 card13 card14 card15"
+                         "card16 card17 card18 card19 card20 card21 card22 card23";
   }
 
-
+  .matched {
+    opacity: 0;
+  }
 
 </style>

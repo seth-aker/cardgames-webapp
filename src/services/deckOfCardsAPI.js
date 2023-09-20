@@ -5,10 +5,10 @@ const http = axios.create({
 });
 
 export default {
-    createDeck() {
-        return http.get('/new/shuffle/?deck_count=1');
+    createMatchingDeck() {
+        return http.get('/new/shuffle/?cards=AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD');
     },
     drawCards(deckId) {
-        return http.get(`/${deckId}/draw/?count=7`);
-    }
+        return http.get(`/${deckId}/draw/?count=1`);
+    } 
 }
