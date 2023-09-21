@@ -17,7 +17,7 @@
             <a href="https://www.linkedin.com/in/sethaker">About Me</a>
           </div>
           <div class="menu-option">
-            <a href="https://github.com/seth-aker/Cardgames_v3">Source Code</a>
+            <a href="https://github.com/seth-aker/">Source Code</a>
           </div>
       </div>
   </main>
