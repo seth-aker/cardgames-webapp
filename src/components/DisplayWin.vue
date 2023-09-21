@@ -1,0 +1,54 @@
+<template>
+  <main class="overlay" >
+      <div class="overlay-content">
+          <h2>	&#9733; &#9733; &#9733; You Win! &#9733; &#9733; &#9733;</h2>
+          <p>Moves taken: {{ $store.state.matchingAttempts }}</p>
+          <p>Time Taken: {{ $store.state.gameTime }}</p>
+          <p><a @click="$router.go(0)">New Matching Game</a></p>
+          <p><router-link :to="{name: 'main-menu'}">Home</router-link></p>
+      </div>
+  </main>
+</template>
+
+<script>
+export default {
+    
+}
+</script>
+
+<style scoped>
+.overlay{
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.522);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.overlay-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 2px white solid ;
+    background-color: rgb(84, 134, 84);
+    margin-top: 200px;
+    width: 20vw;
+}
+
+a{
+    color: white;
+    text-decoration: none;
+    border: 2px white solid;
+    border-radius: 10px;
+    padding: 0.4rem 0.8rem;
+
+}
+
+a:hover{
+    background-color: rgb(116, 177, 116);
+    border: 2px rgba(255, 255, 255, 0.267) solid;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-<div class="card" @click="flipCard" :class="{show: showCard}">
+<div class="card" @click="flipCard" :class="{show: showCard, matched: matched }">
     <div class="card-inner">
         <div class="card-back" >
             <img :src="cardbackURL" alt="card-back">
@@ -17,26 +17,38 @@ export default {
     
     data() {
         return {
-            cardbackURL:'https://www.deckofcardsapi.com/static/img/back.png'
+            cardbackURL:'https://www.deckofcardsapi.com/static/img/back.png',
             
         }
     },
     methods: {
         flipCard() {
-            if(this.showCard === false && this.$store.state.cardsShowing.length < 2) {
+            const cardsShowing = this.$store.state.cardsShowing;
+            if(this.showCard === false && cardsShowing.length < 2) {
             this.$store.commit('ADD_CARD_SHOWING', this.cardName)
             } 
 
-            if(this.$store.state.cardsShowing.length >= 2 ){
-                setTimeout(function() {
-                    this.$store.commit('CLEAR_SHOWING')
+            if(cardsShowing.length >= 2 ){
+                setTimeout(() => {
+                    this.checkMatching(cardsShowing);
+                    this.$store.commit('CLEAR_SHOWING');
                 }, 1000);
+            }
+        },
+
+        checkMatching(cardIds) {
+            if(cardIds === undefined) return
+            if(cardIds[0].substring(0,1) === cardIds[1].substring(0,1)) {
+                this.$store.commit('ADD_MATCHING_CARDS', cardIds)
             }
         }
     },
     computed: {
         showCard() {
              return this.$store.state.cardsShowing.includes(this.cardName) ? true : false      
+        },
+        matched() {
+            return this.$store.state.cardsMatched.includes(this.cardName) ? true : false
         }
     }
      
@@ -65,7 +77,8 @@ img{
 }
 
 .show .card-inner {
-    transform: rotateY(180deg)
+    transform: rotateY(180deg);
+    
 }
 
 .card-back, .card-face {
@@ -76,8 +89,13 @@ img{
 }
 
 .card-face {
-    transform: rotateY(180deg)
+    transform: rotateY(180deg);
+    
 }
+
+.matched {
+    display: none;
+  }
 
 .card0 {
     grid-area: card0;

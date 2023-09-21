@@ -1,24 +1,29 @@
 <template>
-  <div id="matching">
+  <div id="matching" @click="startTimer">
       <aside>
         <h2>Match all the cards to win!</h2>
-        <span><p>Turn Count: {{attempts}}</p></span>
+        <span><p>Moves: {{$store.state.matchingAttempts}}</p></span>
+        <span><p>Cards Matched : {{ $store.state.cardsMatched.length }}/24</p></span>
+        <span><game-timer :isGameOver="isGameOver" /></span>
       </aside>
       <main>
         <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
+      <display-win v-show="isGameOver" />
   </div>
 </template>
 
 <script>
 import PlayingCard from '@/components/PlayingCard.vue';
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
+import GameTimer from '@/components/GameTimer.vue';
+import DisplayWin from '@/components/DisplayWin.vue';
 export default {
   name: "matching-game",
-  components: { PlayingCard },
+  components: { PlayingCard, GameTimer, DisplayWin },
   data() {
     return {
-      attempts: 0,
+      pageTitle: 'Matching',
       deckInfo: {
         success: false,
         deck_id: '',
@@ -30,12 +35,11 @@ export default {
   },
 
   methods: {
-    attempt() {
-      this.attempts++;
-    }
   },
   created() {
-   deckOfCardsAPI.createMatchingDeck().then((resp) => {
+    this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
+    this.$store.commit('CLEAR_MATCIHNG');
+    deckOfCardsAPI.createMatchingDeck().then((resp) => {
       this.deckInfo = resp.data;
       for(let i = 0; i < 24; i++ ) {
         deckOfCardsAPI.drawCards(resp.data.deck_id).then(response => {
@@ -50,6 +54,12 @@ export default {
   computed: {
     cards() {
       return this.$store.state.cards;
+    },
+    isGameOver() {
+      if(this.$store.state.cards.length !== 0) {
+        return this.$store.state.cardsMatched.length === this.$store.state.cards.length ? true : false;
+      }
+      return false
     }
   }
 }
@@ -62,7 +72,7 @@ export default {
   }
 
   aside{
-    width: 300px;
+    width: 10vw;
     background-color:  rgb(116, 177, 116);
     border-radius: 0px 10px 10px 0px;
     padding: 10px;
@@ -75,10 +85,13 @@ export default {
     grid-template-areas: "card0 card1 card2 card3 card4 card5 card6 card7"
                          "card8 card9 card10 card11 card12 card13 card14 card15"
                          "card16 card17 card18 card19 card20 card21 card22 card23";
+    width: 90vw;
+    overflow: hidden;
   }
 
-  .matched {
-    opacity: 0;
+  .displayNone {
+    display: none; 
   }
+  
 
 </style>

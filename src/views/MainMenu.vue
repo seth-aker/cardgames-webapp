@@ -6,9 +6,9 @@
                 <button type="button" class="collapsable" @click="toggleNewGameActive">New Game</button>
             
                 <div class="dropdown-content" :class="{active: newGameActive}">
-                    <router-link :to="{name: 'matching'}">Matching</router-link>
-                    <a href="" >Blackjack</a>
-                    <a href="" >Hearts</a>
+                    <router-link :to="{name: 'matching'}" @click="$store.commit('CLEAR_MATCHING')">Matching</router-link>
+                    <router-link :to="{name: 'comming-soon'}">Blackjack</router-link>
+                    <router-link :to="{name: 'comming-soon'}">Hearts</router-link>
                 </div>
               </div>
             
@@ -27,13 +27,17 @@
 export default {
     data() {
         return {
-            newGameActive: false
+            newGameActive: false,
+            pageTitle: 'Card Games'
         }
     },
     methods: {
         toggleNewGameActive() {
             this.newGameActive = !this.newGameActive;
         }
+    },
+    created() {
+        this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle)
     }
     
 }
