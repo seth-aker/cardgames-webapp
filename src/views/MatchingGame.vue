@@ -35,7 +35,7 @@ export default {
 
   created() {
     this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
-    this.$store.commit('CLEAR_MATCIHNG');
+    this.$store.commit('CLEAR_MATCHING');
     deckOfCardsAPI.createMatchingDeck().then((resp) => {
       this.deckInfo = resp.data;
       for(let i = 0; i < 24; i++ ) {
