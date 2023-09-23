@@ -46,6 +46,7 @@ export default {
 <style scoped>
 main{
     height: 90vh;
+    position: relative;
 }
 .menu-options{
     padding-top: 20vh;

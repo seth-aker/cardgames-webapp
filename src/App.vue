@@ -24,10 +24,14 @@ font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
   color: white;
   margin: 0;
+  overflow: hidden;
 }
 body{
   margin: 0;
   overflow: hidden;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
 }
 
 </style>

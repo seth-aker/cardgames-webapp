@@ -9,7 +9,7 @@
       <main>
         <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
-      <display-win v-show="isGameOver" />
+      <display-win v-show="isGameOver" /> 
   </div>
 </template>
 

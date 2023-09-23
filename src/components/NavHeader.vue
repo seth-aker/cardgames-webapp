@@ -139,7 +139,9 @@ nav li ul {
     flex-direction: column;
     padding: 0;
 }
-
+.games{
+    z-index: 2;
+}
 .game {
     padding: 0.5rem 0;
     width: 100%;

@@ -31,6 +31,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: flex-start;
+
+    overflow: hidden;
 }
 
 .overlay-content {
@@ -39,8 +41,8 @@ export default {
     flex-direction: column;
     border: 2px white solid ;
     background-color: rgb(84, 134, 84);
-    margin-top: 200px;
-    width: 20vw;
+    top: 200px;
+    width: 300px;
 }
 
 a{
