@@ -58,12 +58,11 @@ export default {
 <style scoped>
 
 img{
-    width: 10vw;
+    height: 90%;
 }
 .card{
     background-color: transparent;
-    width: 10vw;
-    height: 30%;
+    width: 100%;
     perspective: 1000px;
     margin: 0.5rem
 }
@@ -168,6 +167,12 @@ img{
 }
 .card23 {
     grid-area: card23;
+}
+
+@media only screen and (max-width: 600px){
+    img {
+        height: 100%;
+    }
 }
 
 

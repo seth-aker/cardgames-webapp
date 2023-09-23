@@ -85,12 +85,11 @@ nav{
     position: absolute;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    right: 2rem;
+    right: 50px;
     top: 0;
     height: 4rem;
-    width: 0;
-    transition:  1000ms ease-in-out;
+    max-width: 0;
+    transition: max-width 1000ms ease-in-out;
     padding: 0;
 }
 
@@ -109,7 +108,7 @@ nav > div > ul {
     background-color: rgb(116, 177, 116);
 }
 .display{
-    width: 22vw;
+    max-width: 300px;
 }
 nav ul {
     display: flex;
@@ -204,13 +203,33 @@ svg{
 }
 
 @media only screen and (max-width: 1100px) {
+header {
+    height: 3.5rem;
+}
 
+h1 {
+    display: none;
+}
 
+nav {
+    height: 3.5rem;
+}
 
+.home {
+    height: 3.5rem;
+}
 
+.home:hover, .home:hover a{
+    height: 3.5rem;
+}
 
+nav li:hover ul {
+	top: 3.5rem;
+}
 
-
+.dropdown {
+    height: 3.5rem;
+}
 }
     
 

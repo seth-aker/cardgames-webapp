@@ -86,6 +86,8 @@ export default {
                          "card8 card9 card10 card11 card12 card13 card14 card15"
                          "card16 card17 card18 card19 card20 card21 card22 card23";
     width: 90vw;
+    justify-items: center;
+    height: -webkit-fill-available;
     overflow: hidden;
   }
 
@@ -93,5 +95,59 @@ export default {
     display: none; 
   }
   
+  @media only screen and (max-width: 1100px) {
+    #matching {
+      flex-direction: column-reverse;
+      justify-content: space-between;
+     
+    }
+    main{
+      width: 100vw;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr 1fr;
+      grid-template-areas:  "card0 card1 card2 card3 card4 card5"
+                            "card6 card7 card8 card9 card10 card11"
+                            "card12 card13 card14 card15 card16 card17"
+                            "card18 card19 card20 card21 card22 card23"
+    }
+    aside {
+      height: 12vh;
+      display: flex;
+      align-content: flex-start;
+      width: 100vw;
+    }
+
+    aside span, aside h2 {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+    }
+    h2{
+      font-size: 12px;
+    }
+    p{
+      font-size: 10px;
+    }
+  }
+
+  @media only screen and (max-width: 600px){
+    
+    main{
+      width: 100vw;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+      grid-template-areas:    "card0 card1 card2 card3"
+                              "card4 card5 card6 card7"
+                              "card8 card9 card10 card11"
+                              "card12 card13 card14 card15"
+                              "card16 card17 card18 card19"
+                              "card20 card21 card22 card23"
+    }
+
+    aside {
+      height: 9vh;
+    }
+
+  }
 
 </style>
