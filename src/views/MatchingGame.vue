@@ -1,10 +1,10 @@
 <template>
-  <div id="matching" @click="startTimer">
+  <div id="matching">
       <aside>
         <h2>Match all the cards to win!</h2>
         <span><p>Moves: {{$store.state.matchingAttempts}}</p></span>
         <span><p>Cards Matched : {{ $store.state.cardsMatched.length }}/24</p></span>
-        <span><game-timer :isGameOver="isGameOver" /></span>
+        <span><game-timer :isGameOver="isGameOver" v-if="reset"  /></span>
       </aside>
       <main>
         <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
@@ -30,12 +30,9 @@ export default {
         shuffled: true,
         remaining: '',
       },
-      
     }
   },
 
-  methods: {
-  },
   created() {
     this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
     this.$store.commit('CLEAR_MATCIHNG');
@@ -60,6 +57,9 @@ export default {
         return this.$store.state.cardsMatched.length === this.$store.state.cards.length ? true : false;
       }
       return false
+    },
+    reset() {
+      return this.$store.state.reset;
     }
   }
 }

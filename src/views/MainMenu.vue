@@ -7,8 +7,8 @@
             
                 <div class="dropdown-content" :class="{active: newGameActive}">
                     <router-link :to="{name: 'matching'}" @click="$store.commit('CLEAR_MATCHING')">Matching</router-link>
-                    <router-link :to="{name: 'comming-soon'}">Blackjack</router-link>
-                    <router-link :to="{name: 'comming-soon'}">Hearts</router-link>
+                    <router-link :to="{name: 'coming-soon'}">Blackjack</router-link>
+                    <router-link :to="{name: 'coming-soon'}">Hearts</router-link>
                 </div>
               </div>
             

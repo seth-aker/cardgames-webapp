@@ -7,7 +7,8 @@ export default createStore({
     cardsShowing: [],
     cardsMatched: [],
     matchingAttempts: 0,
-    gameTime: ''
+    gameTime: '',
+    reset: true
   },
   getters: {
   },
@@ -17,6 +18,7 @@ export default createStore({
       state.cardsShowing = [];
       state.cardsMatched = [];
       state.matchingAttempts = 0;
+      state.gameTime = '';
     },
     UPDATE_PAGE_TITLE(state, pageTitle) {
       state.pageTitle = `Let's Play Some ${pageTitle}!`;
@@ -39,7 +41,7 @@ export default createStore({
     },
     LOG_TIME(state, time){
       state.gameTime = time;
-    }
+    },
   },
   actions: {
   },

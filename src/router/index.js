@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainMenu from '../views/MainMenu.vue'
 import MatchingGame from '@/views/MatchingGame.vue'
-import CommingSoon from '@/views/CommingSoon.vue'
+import ComingSoon from '@/views/ComingSoon.vue'
 const routes = [
   {
     path: '/',
@@ -14,9 +14,9 @@ const routes = [
     component: MatchingGame
   },
   {
-    path: '/comming_soon',
-    name: 'comming-soon',
-    component: CommingSoon
+    path: '/coming_soon',
+    name: 'coming-soon',
+    component: ComingSoon
   }
 ]
 

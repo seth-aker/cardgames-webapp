@@ -32,7 +32,7 @@ export default {
                 setTimeout(() => {
                     this.checkMatching(cardsShowing);
                     this.$store.commit('CLEAR_SHOWING');
-                }, 1000);
+                }, 750);
             }
         },
 

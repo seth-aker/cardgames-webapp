@@ -4,7 +4,7 @@
           <h2>	&#9733; &#9733; &#9733; You Win! &#9733; &#9733; &#9733;</h2>
           <p>Moves taken: {{ $store.state.matchingAttempts }}</p>
           <p>Time Taken: {{ $store.state.gameTime }}</p>
-          <p><a @click="$router.go(0)">New Matching Game</a></p>
+          <p><a @click="startNewGame" >New Matching Game</a></p>
           <p><router-link :to="{name: 'main-menu'}">Home</router-link></p>
       </div>
   </main>
@@ -12,7 +12,12 @@
 
 <script>
 export default {
-    
+    methods: {
+        startNewGame() {
+            this.$store.commit('CLEAR_MATCHING');
+            this.$router.go(this.$router.currentRoute)
+        }
+    }
 }
 </script>
 
