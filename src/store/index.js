@@ -32,7 +32,13 @@ export default createStore({
       state.pageTitle = `Let's Play Some ${pageTitle}!`;
     },
     ADD_CARD(state, card) {
-      state.cards.push(card);
+      const cardCodes = state.cards.map((eachCard) => {
+        return eachCard.code;
+      })
+      
+      if(!cardCodes.includes(card[0].code)) {
+        state.cards.push(card[0]);
+      }
     },
     ADD_CARD_SHOWING(state, cardId) {
       state.cardsShowing.push(cardId);

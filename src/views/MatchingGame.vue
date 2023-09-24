@@ -32,22 +32,26 @@ export default {
       },
     }
   },
+  methods: {
+    async getCards(deckId) {
+      const response = await deckOfCardsAPI.drawCards(deckId)
+      if(response.data.remaining >= 0) {
+        this.$store.commit("ADD_CARD", response.data.cards)
+        if(response.data.remaining > 0)
+          this.getCards(deckId);
+      }
+    }
+  },
 
   created() {
     this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
     this.$store.commit('CLEAR_MATCHING');
+   
     deckOfCardsAPI.createMatchingDeck().then((resp) => {
       this.deckInfo = resp.data;
-      for(let i = 0; i < 24; i++ ) {
-        deckOfCardsAPI.drawCards(resp.data.deck_id).then(response => {
-        response.data.cards.forEach((card) => {
-          this.$store.commit("ADD_CARD", card);
-        });
-      })
-      } 
-    });
-    
-  },
+      this.getCards(resp.data.deck_id);
+    })
+  }, 
   computed: {
     cards() {
       return this.$store.state.cards;
