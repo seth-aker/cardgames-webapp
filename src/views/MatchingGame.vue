@@ -7,7 +7,7 @@
         <span><game-timer :isGameOver="isGameOver" /></span>
       </aside>
       <main>
-        <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
+        <playing-card v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
       <display-win v-show="isGameOver" /> 
   </div>
