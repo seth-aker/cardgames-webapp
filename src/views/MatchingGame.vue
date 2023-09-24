@@ -4,7 +4,7 @@
         <h2>Match all the cards to win!</h2>
         <span><p>Moves: {{$store.state.matchingAttempts}}</p></span>
         <span><p>Cards Matched : {{ $store.state.cardsMatched.length }}/24</p></span>
-        <span><game-timer :isGameOver="isGameOver" v-if="reset"  /></span>
+        <span><game-timer :isGameOver="isGameOver" /></span>
       </aside>
       <main>
         <playing-card v-for="(card, index) in cards" :key="index" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
@@ -53,14 +53,8 @@ export default {
       return this.$store.state.cards;
     },
     isGameOver() {
-      if(this.$store.state.cards.length !== 0) {
-        return this.$store.state.cardsMatched.length === this.$store.state.cards.length ? true : false;
-      }
-      return false
+      return this.$store.getters.isGameOver;
     },
-    reset() {
-      return this.$store.state.reset;
-    }
   }
 }
 </script>

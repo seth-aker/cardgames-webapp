@@ -8,9 +8,17 @@ export default createStore({
     cardsMatched: [],
     matchingAttempts: 0,
     gameTime: '',
-    reset: true
+    
+    
   },
   getters: {
+    isGameOver(state) {
+      if(state.cards.length !== 0){
+        return state.cards.length === state.cardsMatched.length
+      } else {
+        return false;
+      }
+    }
   },
   mutations: {
     CLEAR_MATCHING(state) {

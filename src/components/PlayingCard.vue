@@ -23,25 +23,31 @@ export default {
     },
     methods: {
         flipCard() {
-            const cardsShowing = this.$store.state.cardsShowing;
-            if(this.showCard === false && cardsShowing.length < 2) {
+            if(this.showCard === false && this.$store.state.cardsShowing.length < 2) {
             this.$store.commit('ADD_CARD_SHOWING', this.cardName)
-            } 
+            }
 
-            if(cardsShowing.length >= 2 ){
+            if(this.$store.state.cardsShowing.length >= 2 ){
                 setTimeout(() => {
-                    this.checkMatching(cardsShowing);
+                    this.checkMatching(this.$store.state.cardsShowing);
                     this.$store.commit('CLEAR_SHOWING');
                 }, 750);
+                
             }
         },
 
         checkMatching(cardIds) {
-            if(cardIds === undefined) return
-            if(cardIds[0].substring(0,1) === cardIds[1].substring(0,1)) {
-                this.$store.commit('ADD_MATCHING_CARDS', cardIds)
+            try {
+                if(cardIds !== undefined) {
+                    if(cardIds[0].substring(0,1) === cardIds[1].substring(0,1)) {
+                        this.$store.commit('ADD_MATCHING_CARDS', cardIds)
+                    }
+                }
+            } catch (error) {
+                this.$store.commit('CLEAR_SHOWING');
             }
-        }
+        },
+
     },
     computed: {
         showCard() {
@@ -51,7 +57,6 @@ export default {
             return this.$store.state.cardsMatched.includes(this.cardName) ? true : false
         }
     }
-     
 }
 </script>
 
@@ -71,11 +76,21 @@ img{
     width: 100%;
     height: 100%;
     text-align: center;
-    transition: transform 0.8s;
+    -webkit-transition: all 0.8s ;
+    -moz-transition: all 0.8s ;
+    -ms-transition: all 0.8s ;
+    -o-transition: all 0.8s ;
+    transition: all 0.8s ;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+
 }
 
 .show .card-inner {
+    -moz-transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
     transform: rotateY(180deg);
     
 }
@@ -85,9 +100,15 @@ img{
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
 }
 
 .card-face {
+    -moz-transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
     transform: rotateY(180deg);
     
 }
