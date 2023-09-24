@@ -12,7 +12,7 @@
                         <h2>Games</h2>
                         <ul class="games">
                             <li class="game">
-                                <router-link :to="{name: 'matching'}" @click="$store.commit('CLEAR_MATCHING'), display = false;">Matching</router-link>
+                                <router-link :to="{name: 'matching'}"  @click="startNewGame(), display = false;">Matching</router-link>
                             </li>
                             <li class="game">
                                 <router-link :to="{name: 'coming-soon'}" @click="display = false">Blackjack</router-link>
@@ -43,6 +43,13 @@ export default {
     methods: {
         toggleMenu() {
             this.display = !this.display;
+        },
+        startNewGame() {
+            console.log(this.$route)
+            if(this.$route.path === "/matching") {
+                this.$store.commit('CLEAR_MATCHING');
+                this.$router.go(this.$router.currentRoute)
+            }
         }
     }
 }
