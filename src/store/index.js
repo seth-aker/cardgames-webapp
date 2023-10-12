@@ -1,7 +1,17 @@
 import { createStore } from 'vuex'
+import axios from 'axios';
+
+const currentToken = localStorage.getItem('token')
+const currentUser = JSON.parse(localStorage.getItem('user'));
+
+if (currentToken != null) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
+}
 
 export default createStore({
   state: {
+    token: currentToken || '',
+    user: currentUser || {},
     pageTitle: "Let's Play Some Card Games!",
     cards: [],
     cardsShowing: [],
@@ -60,5 +70,6 @@ export default createStore({
   actions: {
   },
   modules: {
+
   }
 })
