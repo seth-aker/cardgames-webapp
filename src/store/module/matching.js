@@ -13,7 +13,7 @@ const getters = {
         } else {
           return false;
         }
-      }
+      },
 };
 
 const mutations = {
@@ -22,7 +22,6 @@ const mutations = {
         state.cardsShowing = [];
         state.cardsMatched = [];
         state.matchingAttempts = 0;
-        state.gameTime = '';
       },
       ADD_CARD_MATCHING(state, card) {
         const cardCodes = state.cards.map((eachCard) => {
@@ -49,11 +48,15 @@ const mutations = {
       
 }
 
+const actions = {
+  
+}
+
 
 export default {
     namespaced: true,
     state,
     getters,
     mutations,
-
+    actions
 }

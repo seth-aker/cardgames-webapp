@@ -17,6 +17,13 @@ export default {
 
 
 <style>
+:root{
+  --green-background: rgb(84, 134, 84);
+  --green-background-light: rgb(116, 177, 116);
+  --green-hover: rgb(116, 177, 116);
+  --green-hover-light: rgb(135, 192, 135);
+  --default-radius: 10px;
+}
 #app {
 font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -24,6 +31,7 @@ font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
   color: white;
   margin: 0;
+  padding: 0;
   overflow: hidden;
 }
 body{
@@ -35,4 +43,3 @@ body{
 }
 
 </style>
-``

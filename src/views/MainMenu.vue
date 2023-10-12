@@ -6,7 +6,7 @@
                 <button type="button" class="collapsable" @click="toggleNewGameActive">New Game</button>
             
                 <div class="dropdown-content" :class="{active: newGameActive}">
-                    <router-link :to="{name: 'matching'}" @click="$store.commit('CLEAR_MATCHING')">Matching</router-link>
+                    <router-link :to="{name: 'matching'}" @click="$store.commit('m/CLEAR_MATCHING')">Matching</router-link>
                     <router-link :to="{name: 'coming-soon'}">Blackjack</router-link>
                     <router-link :to="{name: 'coming-soon'}">Hearts</router-link>
                 </div>
@@ -25,6 +25,7 @@
 
 <script>
 export default {
+    name: 'main-menu',
     data() {
         return {
             newGameActive: false,
@@ -63,16 +64,16 @@ main{
     width: 300px;
     padding: 0;
     margin: 5px;
-    background-color: rgb(84, 134, 84);
+    background-color: var(--green-background);
     color: white;
     border: 2px solid;
-    border-radius: 10px;   
+    border-radius: var(--default-radius);   
     font-size: 1.25rem;   
 }
 
 
 .menu-option:hover{
-    background-color: rgb(116, 177, 116);
+    background-color: var(--green-hover);
     border: 2px rgba(255, 255, 255, 0.267) solid;
 }  
 
@@ -113,7 +114,7 @@ main{
 }
 
 .dropdown-content a:hover{
-    background-color: rgb(135, 192, 135);
+    background-color: var(--green-hover-light);
     border-radius: 10px;
 }
 .active {

@@ -22,6 +22,20 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="dropdown">
+                        <h2>Account</h2>
+                        <ul class="games">
+                            <li class="game" v-if="!loggedIn">
+                                <router-link :to="{name: 'login'}" >Login</router-link>
+                            </li>
+                            <li class="game" v-if="loggedIn"> 
+                                <a @click.prevent="logout" >Logout</a>
+                            </li>
+                            <li class="game">
+                                <router-link :to="{name: 'register'}">Register</router-link>
+                            </li>
+                        </ul>
+                    </li>
                     <li class="home">
                         <h2><router-link :to="{name: 'main-menu'}">Home</router-link></h2>
                     </li>
@@ -50,7 +64,17 @@ export default {
                 this.$store.commit('CLEAR_MATCHING');
                 this.$router.go(this.$router.currentRoute)
             }
-        }
+        },
+        logout() {
+            this.$store.commit('LOGOUT');
+            this.$router.push({name: 'main-menu'})
+    },
+    },
+    computed: {
+        loggedIn() {
+            const user = this.$store.state.user;
+            return user.username != null;
+    },
     }
 }
 </script>
@@ -59,7 +83,7 @@ export default {
 header{
     display: flex;
     color: white;
-    background-color: rgb(84, 134, 84);
+    background-color: var(--green-background);
     top: 0;
     justify-content: space-between;
     align-items: center;
@@ -79,6 +103,7 @@ h1 {
 
 h2{
     font-size: 1.75rem;
+
 }
 
 div {
@@ -112,10 +137,10 @@ nav > div > ul {
 }
 
 .dropdown:hover{
-    background-color: rgb(116, 177, 116);
+    background-color: var(--green-hover);
 }
 .display{
-    max-width: 300px;
+    max-width: 500px;
 }
 nav ul {
     display: flex;
@@ -155,11 +180,11 @@ nav li ul {
     height: 100%;
 }
 .game:hover a{
-    background-color: rgb(116, 177, 116);
+    background-color: var(--green-hover);
 }
 
 li.game:hover {
-    background-color: rgb(116, 177, 116);
+    background-color: var(--green-hover);
 }
 
 nav li:hover ul {
@@ -173,21 +198,21 @@ nav li:hover ul {
 
 .home{
     display: flex;
-    background-color: rgb(84, 134, 84);
+    background-color: var(--green-background);
     height: 4rem;
     align-items: center;
     padding: 0 20px;
 }
 
 .home:hover, .home:hover a{
-    background-color: rgb(116, 177, 116);
+    background-color: var(--green-hover);
     height: 4rem;
 }
 
 a {
     font-size: 1.75rem;
     color: white;
-    background-color: rgb(84, 134, 84);
+    background-color: var(--green-background);
     padding: 0;
     margin: 0;
     text-decoration: none;
@@ -199,7 +224,7 @@ svg{
     position: relative;
     padding: 1rem 0.75rem;
     height: 2rem;
-    background-color: rgb(84, 134, 84);
+    background-color: var(--green-background);
 }
 
 /*clearfix*/

@@ -57,7 +57,7 @@ export default {
       return this.$store.state.m.cards;
     },
     isGameOver() {
-      return this.$store.getters.isMatchingOver;
+      return this.$store.getters['m/isMatchingOver'];
     },
   }
 }

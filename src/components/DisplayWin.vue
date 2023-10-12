@@ -15,6 +15,7 @@ export default {
     methods: {
         startNewGame() {
             this.$store.commit('m/CLEAR_MATCHING');
+            this.$store.commit('CLEAR_GAME_TIME')
             this.$router.go(this.$router.currentRoute)
         }
     }
