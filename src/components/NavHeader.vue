@@ -251,6 +251,7 @@ nav {
 
 .home {
     height: 3.5rem;
+    padding: 0 5px 0 5px;
 }
 
 .home:hover, .home:hover a{
@@ -263,7 +264,16 @@ nav li:hover ul {
 
 .dropdown {
     height: 3.5rem;
+    padding: 0 5px 0 5px;
 }
+
+h2 {
+    font-size: large;
+}
+a {
+    font-size: large;
+}
+
 }
     
 
