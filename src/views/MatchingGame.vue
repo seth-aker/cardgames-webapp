@@ -2,25 +2,25 @@
   <div id="matching">
       <aside>
         <h2>Match all the cards to win!</h2>
-        <span><p>Moves: {{$store.state.matchingAttempts}}</p></span>
-        <span><p>Cards Matched : {{ $store.state.cardsMatched.length }}/24</p></span>
+        <span><p>Moves: {{$store.state.m.matchingAttempts}}</p></span>
+        <span><p>Cards Matched : {{ $store.state.m.cardsMatched.length }}/24</p></span>
         <span><game-timer :isGameOver="isGameOver" /></span>
       </aside>
       <main>
-        <playing-card v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
+        <matching-card v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
       <display-win v-show="isGameOver" /> 
   </div>
 </template>
 
 <script>
-import PlayingCard from '@/components/PlayingCard.vue';
+import MatchingCard from '@/components/MatchingCard.vue';
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
 import GameTimer from '@/components/GameTimer.vue';
 import DisplayWin from '@/components/DisplayWin.vue';
 export default {
   name: "matching-game",
-  components: { PlayingCard, GameTimer, DisplayWin },
+  components: { MatchingCard, GameTimer, DisplayWin },
   data() {
     return {
       pageTitle: 'Matching',
@@ -36,7 +36,7 @@ export default {
     async getCards(deckId) {
       const response = await deckOfCardsAPI.drawCards(deckId)
       if(response.data.remaining >= 0) {
-        this.$store.commit("ADD_CARD", response.data.cards)
+        this.$store.commit("m/ADD_CARD_MATCHING", response.data.cards)
         if(response.data.remaining > 0)
           this.getCards(deckId);
       }
@@ -45,7 +45,7 @@ export default {
 
   created() {
     this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
-    this.$store.commit('CLEAR_MATCHING');
+    this.$store.commit('m/CLEAR_MATCHING');
    
     deckOfCardsAPI.createMatchingDeck().then((resp) => {
       this.deckInfo = resp.data;
@@ -54,10 +54,10 @@ export default {
   }, 
   computed: {
     cards() {
-      return this.$store.state.cards;
+      return this.$store.state.m.cards;
     },
     isGameOver() {
-      return this.$store.getters.isGameOver;
+      return this.$store.getters.isMatchingOver;
     },
   }
 }

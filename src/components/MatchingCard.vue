@@ -23,14 +23,14 @@ export default {
     },
     methods: {
         flipCard() {
-            if(this.showCard === false && this.$store.state.cardsShowing.length < 2) {
-            this.$store.commit('ADD_CARD_SHOWING', this.cardName)
+            if(this.showCard === false && this.$store.state.m.cardsShowing.length < 2) {
+            this.$store.commit('m/ADD_CARD_SHOWING', this.cardName)
             }
 
-            if(this.$store.state.cardsShowing.length >= 2 ){
+            if(this.$store.state.m.cardsShowing.length >= 2 ){
                 setTimeout(() => {
-                    this.checkMatching(this.$store.state.cardsShowing);
-                    this.$store.commit('CLEAR_SHOWING');
+                    this.checkMatching(this.$store.state.m.cardsShowing);
+                    this.$store.commit('m/CLEAR_SHOWING');
                 }, 750);
                 
             }
@@ -40,21 +40,21 @@ export default {
             try {
                 if(cardIds !== undefined) {
                     if(cardIds[0].substring(0,1) === cardIds[1].substring(0,1)) {
-                        this.$store.commit('ADD_MATCHING_CARDS', cardIds)
+                        this.$store.commit('m/ADD_MATCHING_CARDS', cardIds)
                     }
                 }
             } catch (error) {
-                this.$store.commit('CLEAR_SHOWING');
+                this.$store.commit('m/CLEAR_SHOWING');
             }
         },
 
     },
     computed: {
         showCard() {
-             return this.$store.state.cardsShowing.includes(this.cardName) ? true : false      
+             return this.$store.state.m.cardsShowing.includes(this.cardName) ? true : false      
         },
         matched() {
-            return this.$store.state.cardsMatched.includes(this.cardName) ? true : false
+            return this.$store.state.m.cardsMatched.includes(this.cardName) ? true : false
         }
     }
 }
