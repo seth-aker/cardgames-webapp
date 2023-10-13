@@ -42,7 +42,7 @@ export default {
     data() {
         return {
             pageTitle: 'Blackjack',
-            chips: [{value: 1, color: 'white'},
+            chips: [{value: 1, color: 'whitesmoke'},
                     {value: 5, color: 'red'},
                     {value: 10, color: 'blue'},
                     {value: 20, color: 'grey'},
