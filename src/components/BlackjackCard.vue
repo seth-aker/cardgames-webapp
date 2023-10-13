@@ -1,16 +1,16 @@
 <template>
     <div>
-    <div class="card">
-        <div class="card-inner">
-            <div class="card-back">
-                <img :src="card.image" :alt="card.code">
+        <div class="card">
+            <div class="card-inner">
+                <div class="card-back">
+                    <img :src="card.image" :alt="card.code">
+                </div>
+                <div class="card-face">
+                    <img :src="cardBack" alt="card-back">
+                </div>
             </div>
-            <div class="card-face">
-                <img :src="cardBack" alt="card-back">
-            </div>
-        </div>
 
-    </div>
+        </div>
     </div>
 </template>
 
