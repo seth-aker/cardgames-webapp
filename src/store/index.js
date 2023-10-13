@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import axios from 'axios';
-import Matching from './module/matching'
-import Blackjack from './module/blackjack'
+import Matching from './modules/matching'
+import Blackjack from './modules/blackjack'
 
 const currentToken = localStorage.getItem('token')
 const currentUser = JSON.parse(localStorage.getItem('user'));

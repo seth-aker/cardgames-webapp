@@ -138,9 +138,9 @@ const getters = {
 
 const actions = {
     setupBlackjack({ commit }, gameSession) {
-        commit('SET_SESSION_ID', gameSession.sessionId);
-        commit('SET_PLAYER_HAND', gameSession.playerHand); //might need to be changed to player_hand
-        commit('SET_DEALER_HAND', gameSession.dealerHand); //same here
+        commit('SET_SESSION_ID', gameSession.session_id);
+        commit('SET_PLAYER_HAND', gameSession.player_hand); 
+        commit('SET_DEALER_HAND', gameSession.dealer_hand);
     }
 }
 

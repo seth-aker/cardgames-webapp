@@ -2,16 +2,8 @@ import axios from "axios";
 
 export default {
     newGame() {
-        return axios('/blackjack/new_game', {
-            method: 'GET',
-            mode: 'no-cors',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-      },
-     credentials: 'same-origin',
-
-        });
+        return axios.get('/blackjack/new_game')
+        
     },
     drawCard(deckId, number) {
         return axios.get(`/blackjack/${deckId}/draw?count=${number}`)
