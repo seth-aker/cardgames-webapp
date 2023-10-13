@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import axios from 'axios';
 import Matching from './module/matching'
+import Blackjack from './module/blackjack'
 
 const currentToken = localStorage.getItem('token')
 const currentUser = JSON.parse(localStorage.getItem('user'));
@@ -50,6 +51,7 @@ export default createStore({
   actions: {
   },
   modules: {
-    m: Matching
+    m: Matching,
+    bj: Blackjack
   }
 })

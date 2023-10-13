@@ -4,7 +4,7 @@
             <form @submit.prevent="signIn" class="login-form">
                 <h2>Login</h2>
                 <input type="text" v-model="user.username" id="username" placeholder="Username" required autofocus>
-                <input type="password" v-model="user.password" id="password" placeholder="Password" minlength="8" required>
+                <input type="password" v-model="user.password" id="password" placeholder="Password" required>
                 <input type="submit" value="Sign In" class="button"/>
             </form>
         </div>
