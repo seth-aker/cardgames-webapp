@@ -5,19 +5,10 @@
     
     <main>
         <div class="dealer">
-            <blackjack-card class="card-container" 
-                            v-for="(card, index) in dealerHand" 
-                            :key="index" 
-                            :class="{hidden: index === 0} " 
-                            :card="card">
-            </blackjack-card>
+            <card-container :hand="dealerHand" :isDealer="true" />
         </div>
         <div class="player">
-            <blackjack-card class="card-container" 
-                            v-for="(card, index) in playerHand" 
-                            :key="index" 
-                            :card="card">
-            </blackjack-card>
+            <card-container :hand="playerHand" :isDealer="false" />
         </div>
         <div class="ui">
             <poker-chip v-for="(chip) in chips" :key="chip.value" :value="chip.value" :color="chip.color"></poker-chip>
@@ -28,15 +19,15 @@
 
 <script>
 import BlackjackService from '@/services/BlackjackService';
-import BlackjackCard from '@/components/BlackjackCard.vue';
+import CardContainer from '@/components/Blackjack/CardContainer.vue';
 import GameTimer from '@/components/GameTimer.vue';
-import PokerChip from '@/components/PokerChip.vue';
+import PokerChip from '@/components/Blackjack/PokerChip.vue';
 
 export default {
     name: 'BlackjackGame',
     components: {
         GameTimer,
-        BlackjackCard,
+        CardContainer,
         PokerChip,
     },
     data() {
@@ -72,22 +63,20 @@ export default {
 <style scoped>
 main{
     height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.dealer {
+.dealer, .player {
     height: 200px;
     display: flex;
-
-}
-.player {
-    height: 200px;
-    display: flex;
+    justify-items: center;
+    max-width: 1100px;
+    width: 100%
 }
 .ui {
     position:absolute;
     display: flex;
-}
-.card-container {
-    position: relative;;
 }
 </style>
 

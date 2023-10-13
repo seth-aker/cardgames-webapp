@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import MatchingCard from '@/components/MatchingCard.vue';
+import MatchingCard from '@/components/Matching/MatchingCard.vue';
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
 import GameTimer from '@/components/GameTimer.vue';
 import DisplayWin from '@/components/DisplayWin.vue';
