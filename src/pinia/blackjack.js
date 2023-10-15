@@ -12,7 +12,15 @@ export const useBlackjackStore = defineStore('blackjackStore', {
             hand: []
         },
         round: 1,
-        sessionId: ''
+        sessionId: '',
+        cardsRemaining: 0,
+
+        chips: [{value: 1, color: 'grey'},
+                {value: 5, color: 'red'},
+                {value: 10, color: 'blue'},
+                {value: 25, color: 'green'},
+                {value: 50, color: 'orange'},
+                {value: 100, color: 'black'}]
     }),
 
     getters: {

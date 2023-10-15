@@ -1,3 +1,35 @@
+<script setup>
+import { useBlackjackStore } from '@/pinia/blackjack';
+import { useGameInfoStore } from '@/pinia/gameInfo';
+import BlackjackService from '@/services/BlackjackService';
+import CardContainer from '@/components/Blackjack/CardContainer.vue';
+import GameTimer from '@/components/GameTimer.vue';
+import BlackjackUI from '@/components/Blackjack/BlackjackUI.vue';
+import { ref } from 'vue';
+
+const bjStore = useBlackjackStore();
+const store = useGameInfoStore();
+const error = ref(null);
+const startRound = async () => {
+    try {
+        const response = await BlackjackService.newGame();
+        if(!response.status === 200) {
+            throw Error("Couldn't connect to blackjack server")
+        }
+        bjStore.player.hand = response.data.player_hand;
+        bjStore.dealer.hand = response.data.dealer_hand;
+        bjStore.sessionId = response.data.session_id;
+        bjStore.cardsRemaining = response.data.cards_remaining;
+    } catch(err) {
+        error.value = err.message;
+    }
+}
+
+startRound();
+store.pageTitle = "Let's Play Some Blackjack!"
+</script>
+
+
 <template>
     <aside>
         <game-timer></game-timer>
@@ -5,60 +37,25 @@
     
     <main>
         <div class="dealer">
-            <card-container :hand="dealerHand" :isDealer="true" />
+            <card-container :hand="bjStore.dealer.hand" :isDealer="true" />
         </div>
         <div class="player">
-            <card-container :hand="playerHand" :isDealer="false" />
+            <card-container :hand="bjStore.player.hand" :isDealer="false" />
         </div>
-        <div class="ui">
-            <poker-chip v-for="(chip) in chips" :key="chip.value" :value="chip.value" :color="chip.color"></poker-chip>
+        <div class="ui-container">
+            <div class="money-info">
+                <div class="wallet">
+                    <h2>${{ bjStore.player.wallet }}</h2>
+                </div>
+                <div class="wager">
+                    <h2>${{ bjStore.player.wager }}</h2>
+                </div>
+            </div>
+            <blackjack-u-i class="ui" />
         </div>
     </main>
     
 </template>
-
-<script>
-import BlackjackService from '@/services/BlackjackService';
-import CardContainer from '@/components/Blackjack/CardContainer.vue';
-import GameTimer from '@/components/GameTimer.vue';
-import PokerChip from '@/components/Blackjack/PokerChip.vue';
-
-export default {
-    name: 'BlackjackGame',
-    components: {
-        GameTimer,
-        CardContainer,
-        PokerChip,
-    },
-    data() {
-        return {
-            pageTitle: 'Blackjack',
-            chips: [{value: 1, color: 'grey'},
-                    {value: 5, color: 'red'},
-                    {value: 10, color: 'blue'},
-                    {value: 25, color: 'green'},
-                    {value: 50, color: 'orange'},
-                    {value: 100, color: 'black'}]
-        }
-    },
-    created() {
-        this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
-        BlackjackService.newGame()
-        .then(response => {
-            this.$store.dispatch('bj/setupBlackjack', response.data)
-        })
-    },
-    computed: {
-        dealerHand() {
-            return this.$store.state.bj.dealer.hand;
-        },
-        playerHand() {
-            return this.$store.state.bj.player.hand;
-        },
-
-    }
-}
-</script>
 
 <style scoped>
 main{
@@ -74,9 +71,26 @@ main{
     max-width: 1100px;
     width: 100%
 }
-.ui {
-    position:absolute;
+.ui-container {
+    position: absolute;
+    width: 75%;
+    overflow: hidden;
+    background: transparent; 
     display: flex;
+    flex-direction: column;
+}
+.money-info{
+    display: flex;
+    background-color: var(--green-hover);
+    
+}
+.ui {
+    top: 100%;
+    position: absolute;
+    height: 100%;
+    transition: all 300ms ease-in-out;
+    background-color: var(--green-background)
+
 }
 </style>
 

@@ -1,5 +1,6 @@
 <template>
-    <div class="chip" @click="addToWager">
+    <div class="chip">
+        <p>{{ value }}</p>
         <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
         <svg :style="{border: color}" style="{border: solid 2px}" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
             viewBox="0 0 296.477 296.477" xml:space="preserve">
@@ -34,25 +35,6 @@
 export default {
     name: 'Poker-Chip',
     props: ['value', 'color'],
-    methods: {
-        addToWager(){
-            let wager = this.currentWager + this.value;
-            if(this.playerWallet - wager >= 0) {
-                this.$store.commit('bj/SET_WAGER', wager);
-            } else {
-                alert("Cannot wager more than you have in your wallet")
-            }
-
-        }
-    },
-    computed: {
-        playerWallet() {
-            return this.$store.state.bj.player.wallet;
-        },
-        currentWager() {
-            return this.$store.state.bj.player.wager;
-        }
-    }
 }
 </script>
 
@@ -69,5 +51,9 @@ export default {
     border-radius: 50px;
     border: solid 2px;
     background-color: white;
+}
+
+p {
+    position: absolute;
 }
 </style>
