@@ -12,9 +12,14 @@
 </template>
 
 <script>
+import { useMatchingStore } from '@/pinia/matching';
 export default {
     props: ['imageUrl', 'cardName'],
-    
+    setup() {
+        const matchStore = useMatchingStore();
+
+        return { matchStore };
+    },
     data() {
         return {
             cardbackURL:'https://www.deckofcardsapi.com/static/img/back.png',
@@ -23,38 +28,42 @@ export default {
     },
     methods: {
         flipCard() {
-            if(this.showCard === false && this.$store.state.m.cardsShowing.length < 2) {
-            this.$store.commit('m/ADD_CARD_SHOWING', this.cardName)
+            if(this.showCard === false && this.matchStore.cardsShowing.length < 2) {
+                this.matchStore.cardsShowing.push(this.cardName);
             }
 
-            if(this.$store.state.m.cardsShowing.length >= 2 ){
+            if(this.matchStore.cardsShowing.length == 2 ){
+                this.matchStore.matchingAttempts++;
                 setTimeout(() => {
-                    this.checkMatching(this.$store.state.m.cardsShowing);
-                    this.$store.commit('m/CLEAR_SHOWING');
+                    //this could have been made simpler with card.value instead cardName, but live and learn;
+                    this.checkMatching(this.matchStore.cardsShowing);
+                    this.matchStore.cardsShowing = [];
                 }, 750);
-                
             }
+            
         },
 
         checkMatching(cardIds) {
             try {
                 if(cardIds !== undefined) {
                     if(cardIds[0].substring(0,1) === cardIds[1].substring(0,1)) {
-                        this.$store.commit('m/ADD_MATCHING_CARDS', cardIds)
+                        cardIds.forEach(cardId => {
+                            this.matchStore.cardsMatched.push(cardId);
+                        }) 
                     }
                 }
             } catch (error) {
-                this.$store.commit('m/CLEAR_SHOWING');
+                this.matchStore.cardsShowing = [];
             }
         },
 
     },
     computed: {
         showCard() {
-             return this.$store.state.m.cardsShowing.includes(this.cardName) ? true : false      
+             return this.matchStore.cardsShowing.includes(this.cardName) ? true : false      
         },
         matched() {
-            return this.$store.state.m.cardsMatched.includes(this.cardName) ? true : false
+            return this.matchStore.cardsMatched.includes(this.cardName) ? true : false
         }
     }
 }

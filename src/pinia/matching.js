@@ -8,11 +8,22 @@ export const useMatchingStore = defineStore('matchingStore', {
         matchingAttempts: 0,  
     }),
     getters: {
-        isMatchingOver: (state) => {
+        isGameOver: (state) => {
             if(state.cards.length !== 0){
                 return state.cards.length === state.cardsMatched.length
               } else {
                 return false;
+              }
+        }
+    },
+    actions: {
+        addCards(cards) {
+            const cardCodes = this.cards.map((eachCard) => {
+                return eachCard.code;
+              })
+              
+              if(!cardCodes.includes(cards[0].code)) {
+                this.cards.push(cards[0]);
               }
         }
     }

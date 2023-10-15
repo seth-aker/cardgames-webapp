@@ -2,7 +2,7 @@
    <header>
         <div id="left-header">
             <img src="https://www.deckofcardsapi.com/static/img/spade.svg" alt="spade-img">
-            <h1> {{ this.$store.state.pageTitle }} </h1>
+            <h1> {{ store.pageTitle }} </h1>
         </div>
         
         <nav id="links" :class="{display: display}">
@@ -15,7 +15,7 @@
                                 <router-link :to="{name: 'matching'}"  @click="startNewGame(), display = false;">Matching</router-link>
                             </li>
                             <li class="game">
-                                <router-link :to="{name: 'coming-soon'}" @click="display = false">Blackjack</router-link>
+                                <router-link :to="{name: 'blackjack'}" @click="display = false">Blackjack</router-link>
                             </li>
                             <li class="game">
                                 <router-link :to="{name: 'coming-soon'}" @click="display = false">Hearts</router-link>
@@ -28,8 +28,8 @@
                             <li class="game" v-if="!userStore.isLoggedIn">
                                 <router-link :to="{name: 'login'}" >Login</router-link>
                             </li>
-                            <li class="game" v-if="userStore.isLoggedIn"> 
-                                <a @click.prevent="logout" >Logout</a>
+                            <li class="game" v-if="userStore.isLoggedIn" @click.prevent="logout"> 
+                                <a>Logout</a>
                             </li>
                             <li class="game">
                                 <router-link :to="{name: 'register'}">Register</router-link>
@@ -49,11 +49,15 @@
 
 <script>
 import { useUserStore } from '../pinia/user';
+import { useGameInfoStore } from '@/pinia/gameInfo';
+import { useMatchingStore } from '@/pinia/matching';
 export default {
     setup() {
         const userStore = useUserStore();
+        const store = useGameInfoStore();
+        const matchStore = useMatchingStore();
 
-        return { userStore }
+        return { userStore, store, matchStore }
     },
     data() {
         return {
@@ -67,7 +71,7 @@ export default {
         startNewGame() {
             // console.log(this.$route)
             if(this.$route.path === "/matching") {
-                this.$store.commit('CLEAR_MATCHING');
+                this.matchStore.$reset();
                 this.$router.go(this.$router.currentRoute)
             }
         },
@@ -122,7 +126,7 @@ nav{
     top: 0;
     height: 4rem;
     max-width: 0;
-    transition: max-width 1000ms ease-in-out;
+    transition: max-width 850ms ease-in-out;
     padding: 0;
 }
 
@@ -179,6 +183,7 @@ nav li ul {
     padding: 0.5rem 0;
     width: 100%;
     height: 100%;
+    cursor: pointer;
 }
 .game:hover a{
     background-color: var(--green-hover);
@@ -218,6 +223,7 @@ a {
     margin: 0;
     text-decoration: none;
     border: none;
+    cursor: pointer;
 }
 
 

@@ -2,14 +2,14 @@
   <div id="matching">
       <aside>
         <h2>Match all the cards to win!</h2>
-        <span><p>Moves: {{$store.state.m.matchingAttempts}}</p></span>
-        <span><p>Cards Matched : {{ $store.state.m.cardsMatched.length }}/24</p></span>
-        <span><game-timer :isGameOver="isGameOver" /></span>
+        <span><p>Moves: {{matchStore.matchingAttempts}}</p></span>
+        <span><p>Cards Matched : {{ matchStore.cardsMatched.length }}/24</p></span>
+        <span><game-timer :isGameOver="matchStore.isGameOver" /></span>
       </aside>
       <main>
-        <matching-card v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
+        <matching-card v-for="(card, index) in matchStore.cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
-      <display-win v-show="isGameOver" /> 
+      <display-win v-show="matchStore.isGameOver" /> 
   </div>
 </template>
 
@@ -18,48 +18,57 @@ import MatchingCard from '@/components/Matching/MatchingCard.vue';
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
 import GameTimer from '@/components/GameTimer.vue';
 import DisplayWin from '@/components/DisplayWin.vue';
+import { useMatchingStore } from '@/pinia/matching';
+import { useGameInfoStore } from '@/pinia/gameInfo';
+import { ref } from 'vue';
+
+
 export default {
   name: "matching-game",
-  components: { MatchingCard, GameTimer, DisplayWin },
-  data() {
-    return {
-      pageTitle: 'Matching',
-      deckInfo: {
-        success: false,
-        deck_id: '',
-        shuffled: true,
-        remaining: '',
-      },
+  setup() {
+    const matchStore = useMatchingStore();
+    matchStore.$reset();
+    const store = useGameInfoStore();
+    store.pageTitle = "Let's Play Memory Matching!"
+    const error = ref(null);
+
+    //begins the async calls to get the cards. Uses function below 'getCards'
+    const getDeck = async () => {
+      try {
+        const response = await deckOfCardsAPI.createMatchingDeck();
+        if(!response.status === 200) {
+          throw Error("Failed to connect to deckofcardsapi.com")
+        }
+        getCards(response.data.deck_id)
+      } catch (err) {
+        error.value = err.message
+      }
+      
     }
-  },
-  methods: {
-    async getCards(deckId) {
-      const response = await deckOfCardsAPI.drawCards(deckId)
-      if(response.data.remaining >= 0) {
-        this.$store.commit("m/ADD_CARD_MATCHING", response.data.cards)
-        if(response.data.remaining > 0)
-          this.getCards(deckId);
+
+    //runs until all the cards from the deck have been drawn.
+    const getCards = async (deckId) => {
+      try {
+        const response = await deckOfCardsAPI.drawCards(deckId)
+        if(!response.status === 200) {
+          throw Error("Try again")
+        }
+        if(response.data.remaining >= 0) {
+          matchStore.addCards(response.data.cards)
+          if(response.data.remaining > 0)
+            getCards(deckId);
+        }
+      } catch(err) {
+        getCards(deckId)
       }
     }
-  },
 
-  created() {
-    this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
-    this.$store.commit('m/CLEAR_MATCHING');
-   
-    deckOfCardsAPI.createMatchingDeck().then((resp) => {
-      this.deckInfo = resp.data;
-      this.getCards(resp.data.deck_id);
-    })
-  }, 
-  computed: {
-    cards() {
-      return this.$store.state.m.cards;
-    },
-    isGameOver() {
-      return this.$store.getters['m/isMatchingOver'];
-    },
-  }
+    
+    getDeck();
+    return { matchStore, error}
+  },
+  
+  components: { MatchingCard, GameTimer, DisplayWin },
 }
 </script>
 
