@@ -1,57 +1,32 @@
 <template>
-  <p>Timer: {{ minutes }}:{{ formattedSeconds }}</p>
+  <p v-show="!isGameOver">Timer: {{ minutes }}:{{ seconds }}</p>
+  <p v-show="isGameOver">Timer: {{ store.gameTime }}</p>
+  <button @click="stopTimer">Stop</button>
+  <button @click="startTimer">Start</button>
 </template>
 
 <script>
+import getTimer from '../composables/getTimer'
+import { useGameInfoStore } from '@/pinia/gameInfo';
 export default {
-props: ['isGameOver'],
-data() {
-    return {
-        seconds: 0,
-    }
-},
-created() {
-    let interval = setInterval(() => {
-        this.seconds++;
-        if(this.isGameOver) {
-            this.$store.commit('LOG_TIME', `${this.timeLog.formattedMinutes}:${this.timeLog.seconds}`)
-            clearInterval(interval);
-        }
-    }, 1000); 
-},
-computed: {
-    minutes() {
-        let m = this.seconds/60;
-        if(m < 1){
-            return '00';
-        } 
-        if(m < 10){
-            return `0${Math.floor(m)}`;
-        }
-        return Math.floor(m);
-       
+    props: ['isGameOver'],
+    name: 'GameTimer',
+    setup() {
+      const store = useGameInfoStore();
+        const {seconds, minutes, startTimer, stopTimer} = getTimer();
+  
+      return {store, seconds, minutes, startTimer, stopTimer};
     },
-    formattedSeconds() {
-        let s = this.seconds % 60;
-        if(s === 0) {
-            return '00';
-        } 
-        if(s < 10) {
-            return `0${s}`;
-        } else {
-            return s;
-        }
-        
+    created(){
+      this.startTimer();
     },
-    timeLog() {
-        const time = {
-            formattedMinutes: this.minutes,
-            seconds: this.formattedSeconds
-        };
-        return time;
+    watch: {
+      isGameOver() {
+        this.stopTimer();
+      }
     }
+    
 
-}
 }
 </script>
 

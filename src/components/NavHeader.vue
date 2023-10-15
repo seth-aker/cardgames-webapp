@@ -25,10 +25,10 @@
                     <li class="dropdown">
                         <h2>Account</h2>
                         <ul class="games">
-                            <li class="game" v-if="!loggedIn">
+                            <li class="game" v-if="!userStore.isLoggedIn">
                                 <router-link :to="{name: 'login'}" >Login</router-link>
                             </li>
-                            <li class="game" v-if="loggedIn"> 
+                            <li class="game" v-if="userStore.isLoggedIn"> 
                                 <a @click.prevent="logout" >Logout</a>
                             </li>
                             <li class="game">
@@ -48,7 +48,13 @@
 </template>
 
 <script>
+import { useUserStore } from '../pinia/user';
 export default {
+    setup() {
+        const userStore = useUserStore();
+
+        return { userStore }
+    },
     data() {
         return {
             display: false
@@ -59,23 +65,18 @@ export default {
             this.display = !this.display;
         },
         startNewGame() {
-            console.log(this.$route)
+            // console.log(this.$route)
             if(this.$route.path === "/matching") {
                 this.$store.commit('CLEAR_MATCHING');
                 this.$router.go(this.$router.currentRoute)
             }
         },
         logout() {
-            this.$store.commit('LOGOUT');
+            this.userStore.logout();
             this.$router.push({name: 'main-menu'})
+        },
     },
-    },
-    computed: {
-        loggedIn() {
-            const user = this.$store.state.user;
-            return user.username != null;
-    },
-    }
+    
 }
 </script>
 

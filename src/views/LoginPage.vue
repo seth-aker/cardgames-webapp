@@ -3,6 +3,7 @@
         <div class="login">
             <form @submit.prevent="signIn" class="login-form">
                 <h2>Login</h2>
+                <p v-show="invalidCredentials">Invalid username or password</p>
                 <input type="text" v-model="user.username" id="username" placeholder="Username" required autofocus>
                 <input type="password" v-model="user.password" id="password" placeholder="Password" required>
                 <input type="submit" value="Sign In" class="button"/>
@@ -13,8 +14,16 @@
 
 <script>
 import AuthService from '@/services/AuthService';
+import { useUserStore } from '@/pinia/user';
+import { useGameInfoStore } from '@/pinia/gameInfo';
 export default {
     name: 'login-page',
+    setup() {
+        const userStore = useUserStore();
+        const gameInfoStore = useGameInfoStore();
+        gameInfoStore.$reset();
+        return { userStore }
+    },
     data() {
         return {
             user: {
@@ -29,8 +38,8 @@ export default {
             AuthService.login(this.user)
             .then(response => {
                 if (response.status == 200) {
-                this.$store.commit("SET_AUTH_TOKEN", response.data.token);
-                this.$store.commit("SET_USER", response.data.user);
+                this.userStore.setAuthToken(response.data.token);
+                this.userStore.setUser(response.data.user)
                 this.$router.push({name:'main-menu'});
             }
             })
