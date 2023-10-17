@@ -21,10 +21,11 @@ export const useMatchingStore = defineStore('matchingStore', {
             const cardCodes = this.cards.map((eachCard) => {
                 return eachCard.code;
               })
-              
-              if(!cardCodes.includes(cards[0].code)) {
-                this.cards.push(cards[0]);
-              }
+            cards.forEach(card => {
+              if(!cardCodes.includes(card.code)) {
+                  this.cards.push(card);
+                }
+            })
         }
     }
 })

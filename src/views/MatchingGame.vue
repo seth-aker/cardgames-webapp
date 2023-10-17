@@ -49,7 +49,7 @@ export default {
     //runs until all the cards from the deck have been drawn.
     const getCards = async (deckId) => {
       try {
-        const response = await deckOfCardsAPI.drawCards(deckId)
+        const response = await deckOfCardsAPI.drawCards(deckId, 24)
         if(!response.status === 200) {
           throw Error("Try again")
         }

@@ -1,6 +1,12 @@
 import { defineStore } from "pinia";
 import getHandValue from "@/composables/getHandValue";
 
+// import greyPC from "@/assets/poker-chip.grey.png";
+// import redPC from "@/assets/poker-chip.red.png";
+// import bluePC from "@/assets/poker-chip.blue.png";
+// import greenPC from "@/assets/poker-chip.green.png";
+// import orangePC from "@/assets/poker-chip.orange.png";
+// import blackPC from "@/assets/poker-chip.black.png"
 export const useBlackjackStore = defineStore('blackjackStore', {
     state: () => ({
         player: {
@@ -15,12 +21,12 @@ export const useBlackjackStore = defineStore('blackjackStore', {
         sessionId: '',
         cardsRemaining: 0,
 
-        chips: [{value: 1, color: 'grey'},
-                {value: 5, color: 'red'},
-                {value: 10, color: 'blue'},
-                {value: 25, color: 'green'},
-                {value: 50, color: 'orange'},
-                {value: 100, color: 'black'}]
+        chips: [{value: 1, src: './src/assets/poker-chip-grey.png'},
+                {value: 5, src: './src/assets/poker-chip-red.png'},
+                {value: 10, src: 'src/assets/poker-chip-blue.png'},
+                {value: 25, src: 'src/assets/poker-chip-green.png'},
+                {value: 50, src: 'src/assets/poker-chip-orange.png'},
+                {value: 100, src: 'src/assets/poker-chip-black.png'}]
     }),
 
     getters: {

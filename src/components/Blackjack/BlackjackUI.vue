@@ -18,7 +18,7 @@ const addToPlayerWager = (amount) => {
     <div class="ui">
         <div class="chips">
             <div @click="addToPlayerWager(chip.value)" v-for="(chip) in bjStore.chips" :key="chip.value">
-                <PokerChip :value="chip.value" :color="chip.color" />
+                <PokerChip :value="chip.value" :src="chip.src" />
             </div>
         </div>
     </div>
