@@ -1,6 +1,7 @@
 <template>
     <div class="chip">
-        <img :src="src" :alt="value" />
+        <h2 class="chip-value">${{ value }}</h2>
+        <img :src="src" :alt="value" >
     </div>
 </template>
 
@@ -14,20 +15,31 @@ export default {
 
 <style scoped>
 .chip {
-    width: 50px;
-    height: 50px;
-    margin: 0;
+    margin: 15px;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
 }
-.chip svg {
-    width: 50px;
-    height: 50px;
+.chip img {
+    width: 75px;
+    height: 75px;
+    background-color: white;
     border-radius: 50px;
-    border: solid 2px;
-   
+    box-shadow: 1px 4px 4px black;
 }
 
-p {
-    position: absolute;
+.chip:active img {
+    box-shadow: 0px 1px 2px black;
+}
+
+.chip-value {
+    position: relative;
+    color: white;
+    margin: 2px;
+    padding: 0
+    
+    
 }
 </style>

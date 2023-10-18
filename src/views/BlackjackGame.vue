@@ -5,19 +5,21 @@ import BlackjackService from '@/services/BlackjackService';
 import CardContainer from '@/components/Blackjack/CardContainer.vue';
 import GameTimer from '@/components/GameTimer.vue';
 import BlackjackUI from '@/components/Blackjack/BlackjackUI.vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const bjStore = useBlackjackStore();
 const store = useGameInfoStore();
 const error = ref(null);
-const startRound = async () => {
+const earnings = computed(() => {
+    return bjStore.player.wallet - 500
+})
+const newGame = async () => {
     try {
         const response = await BlackjackService.newGame();
         if(!response.status === 200) {
             throw Error("Couldn't connect to blackjack server")
         }
-        bjStore.player.hand = response.data.player_hand;
-        bjStore.dealer.hand = response.data.dealer_hand;
+        bjStore.sessionDTO = response.data;
         bjStore.sessionId = response.data.session_id;
         bjStore.cardsRemaining = response.data.cards_remaining;
     } catch(err) {
@@ -25,45 +27,64 @@ const startRound = async () => {
     }
 }
 
-startRound();
+newGame();
 store.pageTitle = "Let's Play Some Blackjack!"
 </script>
 
 
 <template>
-    <aside>
-        <game-timer></game-timer>
-    </aside>
-    
-    <main>
-        <div class="dealer">
-            <card-container :hand="bjStore.dealer.hand" :isDealer="true" />
-        </div>
-        <div class="player">
-            <card-container :hand="bjStore.player.hand" :isDealer="false" />
-        </div>
-        <div class="ui-container">
-            <div class="money-info">
-                <div class="wallet">
-                    <h2>${{ bjStore.player.wallet }}</h2>
-                </div>
-                <div class="wager">
-                    <h2>${{ bjStore.player.wager }}</h2>
-                </div>
+    <div class="flex">
+        <aside>
+            <div class="game-info">
+                <p>Round: {{ bjStore.round }}</p>
+                <p>Earnings: ${{ earnings }}</p>
+                <p>Cards Remaining: {{ bjStore.cardsRemaining }}</p>
+                <game-timer></game-timer>
             </div>
-            <blackjack-u-i class="ui" />
-        </div>
-    </main>
+            
+        </aside>
+        <main>
+            <div class="dealer">
+                <card-container :hand="bjStore.dealer.hand" :isDealer="true" />
+            </div>
+            <div class="player">
+                <card-container :hand="bjStore.player.hand" :isDealer="false" />
+            </div>
+            <div class="ui-container">
+                <div class="money-info">
+                    <div class="wallet">
+                        <h2> Wallet: ${{ bjStore.player.wallet }}</h2>
+                    </div>
+                    <div class="wager">
+                        <h2>Current Wager: ${{ bjStore.player.wager }}</h2>
+                    </div>
+                </div>
+                <blackjack-u-i  class="ui" :class="{show: bjStore.showUi}"/>
+            </div>
+        </main>
+    </div>
+    
     
 </template>
 
 <style scoped>
+.flex {
+    display: flex;
+}
+
 main{
-    height: 90vh;
+    max-height: fit-content;
+    width: 90vw;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+aside {
+    width: 10vw;
+    height: 100vw;
+    background-color: var(--green-hover);
+    border-right: solid 3px white;
+}   
 .dealer, .player {
     height: 200px;
     display: flex;
@@ -72,25 +93,42 @@ main{
     width: 100%
 }
 .ui-container {
-    position: absolute;
-    width: 75%;
+    position: absolute ;
+    width: max-content;
     overflow: hidden;
     background: transparent; 
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
+    bottom: 0;
+    right: 0;
+    transition: all 300ms ease-in-out;
 }
 .money-info{
     display: flex;
     background-color: var(--green-hover);
+    width: min-content;
+   
+    border-top: 2px solid var(--green-background);
+    border-left: 2px solid var(--green-background);
+    border-radius: var(--default-radius) 0 0 0;
     
 }
-.ui {
-    top: 100%;
-    position: absolute;
-    height: 100%;
-    transition: all 300ms ease-in-out;
-    background-color: var(--green-background)
+.wallet, .wager {
+    padding: 10px;
+    width: max-content
+}
 
+.ui {
+    height: 0;
+    overflow: hidden;
+    transition: all 300ms ease-in-out;
+    background-color: var(--green-hover);
+    width: 100%;
+}
+
+.show {
+    height: 150px;
 }
 </style>
 

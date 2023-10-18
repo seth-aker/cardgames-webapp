@@ -2,24 +2,24 @@
   <div class="game-timer">
     <p v-show="!isGameOver">Timer: {{ minutes }}:{{ seconds }}</p>
     <p v-show="isGameOver">Timer: {{ store.gameTime }}</p>
-    <div class="btn">
+    <!-- <div class="btn">
       <my-button :on-click="stopTimer">Stop Timer</my-button>
     </div>
     <div class="btn">
       <my-button :on-click="startTimer"> Start Timer</my-button>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 import getTimer from '../composables/getTimer'
 import { useGameInfoStore } from '@/pinia/gameInfo';
-import MyButton from './MyButton.vue'
+// import MyButton from './MyButton.vue'
 export default {
     props: ['isGameOver'],
     name: 'GameTimer',
     components: {
-    MyButton,
+    // MyButton,
 },
     setup() {
       const store = useGameInfoStore();
