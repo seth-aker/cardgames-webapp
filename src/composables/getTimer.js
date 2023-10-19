@@ -13,6 +13,7 @@ const getTimer = () => {
                 clearInterval(timer);
             }
             totalSec.value++
+            store.gameTimeSec = totalSec;
         }, 1000)
     
     };

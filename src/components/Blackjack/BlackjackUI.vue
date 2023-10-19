@@ -2,22 +2,50 @@
 import MyButton from '../MyButton.vue';
 import PokerChip from './PokerChip.vue';
 import { useBlackjackStore } from '@/pinia/blackjack';
+import { useGameInfoStore } from "@/pinia/gameInfo";
+import checkForNaturals from "@/composables/checkForNaturals"
+import BlackjackService from '@/services/BlackjackService';
+import { mapGameToSessionDto } from '@/composables/mapGameToSessionDto'
 const bjStore = useBlackjackStore();
-
+const infoStore = useGameInfoStore();
 //series of nested timeouts to deal cards to each player
-const dealRound = () => {
+const dealRound = async () => {
     bjStore.showUi = false    
     bjStore.player.hand.push(bjStore.sessionDTO.deck.cards.shift())
-        setTimeout(()=> {
-            bjStore.dealer.hand.push(bjStore.sessionDTO.deck.cards.shift())
+    setTimeout(()=> {
+        bjStore.dealer.hand.push(bjStore.sessionDTO.deck.cards.shift())
+        setTimeout(() => {
+            bjStore.player.hand.push(bjStore.sessionDTO.deck.cards.shift())
             setTimeout(() => {
-                bjStore.player.hand.push(bjStore.sessionDTO.deck.cards.shift())
-                setTimeout(() => {
-                    bjStore.dealer.hand.push(bjStore.sessionDTO.deck.cards.shift())
-                }, 1000)
+                bjStore.dealer.hand.push(bjStore.sessionDTO.deck.cards.shift())
+                processResults();
             }, 1000)
         }, 1000)
+    }, 1000)
+}
+const processResults = async () => {
+    const deckId = bjStore.sessionDTO.deck.deck_id;
+    const hasDealerNatural = checkForNaturals(bjStore.dealer.hand);
+    const hasPlayerNatural = checkForNaturals(bjStore.player.hand);
+
+    if(hasDealerNatural && hasPlayerNatural) {
+        resetWager();
+    } else if (hasDealerNatural) {
+        console.log("DEALER")
+        bjStore.player.wager = 0;
+        bjStore.sessionDTO = mapGameToSessionDto(bjStore, infoStore)
+        bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+    } else if (hasPlayerNatural) {
+        console.log("PLAYER")
+        bjStore.player.wallet += (bjStore.player.wager * 1.5);
+        bjStore.player.wager = 0;
+        bjStore.sessionDTO = mapGameToSessionDto(bjStore, infoStore)
+        bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO)
+    } else {
+        console.log("NONE")
     }
+
+}
 
 const addToPlayerWager = (amount) => {
     if(amount <= bjStore.player.wallet) {

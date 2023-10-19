@@ -28,3 +28,5 @@ const calculateWinner = () => {
     }
     
 }
+
+export default calculateWinner;
