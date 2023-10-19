@@ -2,8 +2,16 @@ import { defineStore } from "pinia";
 import getHandValue from "@/composables/getHandValue";
 export const useBlackjackStore = defineStore('blackjackStore', {
     state: () => ({
-        sessionDTO: {}, //stores the Game Session DTO before the player makes a wager
         
+        /** Contains the information from the backend responses.
+         * { session_id: Number,
+            username: String,
+            deck: {},
+            player_money: Number,
+            round: Number }
+         */
+        sessionDTO: {}, 
+                                
         player: {
             hand: [],
             wallet: 500.00,

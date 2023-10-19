@@ -7,16 +7,16 @@ const bjStore = useBlackjackStore();
 //series of nested timeouts to deal cards to each player
 const dealRound = () => {
     bjStore.showUi = false    
-    bjStore.player.hand.push(bjStore.sessionDTO.player_hand.shift())
+    bjStore.player.hand.push(bjStore.sessionDTO.deck.cards.shift())
         setTimeout(()=> {
-            bjStore.dealer.hand.push(bjStore.sessionDTO.dealer_hand.shift())
+            bjStore.dealer.hand.push(bjStore.sessionDTO.deck.cards.shift())
             setTimeout(() => {
-                bjStore.player.hand.push(bjStore.sessionDTO.player_hand.shift())
+                bjStore.player.hand.push(bjStore.sessionDTO.deck.cards.shift())
                 setTimeout(() => {
-                    bjStore.dealer.hand.push(bjStore.sessionDTO.dealer_hand.shift())
-                }, 750)
-            }, 750)
-        }, 750)
+                    bjStore.dealer.hand.push(bjStore.sessionDTO.deck.cards.shift())
+                }, 1000)
+            }, 1000)
+        }, 1000)
     }
 
 const addToPlayerWager = (amount) => {

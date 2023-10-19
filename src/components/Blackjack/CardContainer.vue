@@ -2,7 +2,7 @@
         <blackjack-card class="card-container" 
                             v-for="(card, index) in hand" 
                             :key="index" 
-                            :class="{hidden: index === 0 && isDealer} " 
+                            :class="{hidden: index === 0 && hiddenFirst} " 
                             :card="card"
                             :style="{right: offset(index)}">
         </blackjack-card>
@@ -16,7 +16,7 @@ export default {
     components: {
         BlackjackCard
     },
-    props: ['hand', 'isDealer'],
+    props: ['hand', 'hiddenFirst'],
     methods: {
         offset(index) {
             return `${(index)*75}px`

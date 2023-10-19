@@ -3,16 +3,15 @@ import { useBlackjackStore } from '@/pinia/blackjack';
 import { useGameInfoStore } from '@/pinia/gameInfo';
 import BlackjackService from '@/services/BlackjackService';
 import CardContainer from '@/components/Blackjack/CardContainer.vue';
-import GameTimer from '@/components/GameTimer.vue';
 import BlackjackUI from '@/components/Blackjack/BlackjackUI.vue';
-import { computed, ref } from 'vue';
+import AsideBlackjack from '@/components/Blackjack/AsideBlackjack.vue';
+import { ref } from 'vue';
 
+const hiddenFirst = ref(true)
 const bjStore = useBlackjackStore();
 const store = useGameInfoStore();
 const error = ref(null);
-const earnings = computed(() => {
-    return bjStore.player.wallet - 500
-})
+
 const newGame = async () => {
     try {
         const response = await BlackjackService.newGame();
@@ -34,21 +33,13 @@ store.pageTitle = "Let's Play Some Blackjack!"
 
 <template>
     <div class="flex">
-        <aside>
-            <div class="game-info">
-                <p>Round: {{ bjStore.round }}</p>
-                <p>Earnings: ${{ earnings }}</p>
-                <p>Cards Remaining: {{ bjStore.cardsRemaining }}</p>
-                <game-timer></game-timer>
-            </div>
-            
-        </aside>
+        <aside-blackjack @revealHidden="hiddenFirst = false"></aside-blackjack>
         <main>
             <div class="dealer">
-                <card-container :hand="bjStore.dealer.hand" :isDealer="true" />
+                <card-container :hand="bjStore.dealer.hand" :hiddenFirst="hiddenFirst" />
             </div>
             <div class="player">
-                <card-container :hand="bjStore.player.hand" :isDealer="false" />
+                <card-container :hand="bjStore.player.hand" :hiddenFirst="false" />
             </div>
             <div class="ui-container">
                 <div class="money-info">
