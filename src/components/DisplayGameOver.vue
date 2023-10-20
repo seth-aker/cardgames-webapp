@@ -14,7 +14,7 @@ const emit = defineEmits(['newGame'])
             <h2> Game Over </h2>
             <p>Total Earnings: {{ bjStore.earnings }}</p>
             <p>Total Time: {{ infoStore.gameTime }}</p>
-            <p>Rounds Played: {{ bjStore.round }}</p>
+            <p>Rounds Played: {{ bjStore.sessionDTO.round }}</p>
             <my-button class="btn" @click="emit('newGame')">New Game</my-button>
             <my-button class="btn" @click="this.$router.push({name: 'main-menu'})">Main Menu</my-button>
         </div>
@@ -38,7 +38,7 @@ const emit = defineEmits(['newGame'])
     display: flex;
     flex-direction: column;
     border: 2px white solid ;
-    background-color: var(--green-hover);
+    background-color: var(--green-background);
     top: 200px;
     width: 300px;
     align-items: center;

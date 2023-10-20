@@ -22,7 +22,6 @@ export const useBlackjackStore = defineStore('blackjackStore', {
         dealer: {
             hand: []
         },
-        round: 1,
         sessionId: '',
         cardsRemaining: 0,
         showUi: true,

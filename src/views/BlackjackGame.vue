@@ -82,7 +82,7 @@ aside {
 .dealer, .player {
     height: 200px;
     display: flex;
-    justify-items: center;
+    justify-content: center;
     max-width: 1100px;
     width: 100%
 }

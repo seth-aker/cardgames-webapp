@@ -20,7 +20,7 @@ const hit = () => {
 <template>
     <aside>
         <div class="game-info">
-            <p>Round: {{ bjStore.round }}</p>
+            <p>Round: {{ bjStore.sessionDTO.round }}</p>
             <p>Earnings: ${{ bjStore.earnings }}</p>
             <p>Cards Remaining: {{ bjStore.cardsRemaining }}</p>
             <game-timer :isGameOver="bjStore.isGameOver"></game-timer>
