@@ -41,7 +41,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-
     overflow: hidden;
 }
 

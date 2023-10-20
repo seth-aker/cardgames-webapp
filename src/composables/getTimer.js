@@ -7,6 +7,7 @@ const getTimer = () => {
     const isGameOver = ref(false)
     const startTimer = () => {
         //in case timer needs to restart without resetting completely.
+        totalSec.value = 0;
         isGameOver.value = false;
         let timer = setInterval(() => {
             if(isGameOver.value) {
@@ -46,7 +47,6 @@ const getTimer = () => {
         isGameOver.value = true;
         store.gameTime = `${minutes.value}:${seconds.value}`;
     }
-    
 
     return { seconds, minutes, startTimer, stopTimer}
 }

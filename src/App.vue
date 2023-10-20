@@ -1,32 +1,20 @@
+<script setup>
+import NavHeader from '@/components/NavHeader.vue'
+import axios from 'axios';
+
+const currentToken = localStorage.getItem('token')
+if (currentToken != null) {
+axios.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
+}
+
+
+
+</script>
+
 <template>
   <nav-header></nav-header>
   <router-view/>
 </template>
-
-<script>
-import NavHeader from '@/components/NavHeader.vue'
-import { useUserStore } from './pinia/user';
-import axios from 'axios';
-export default {
-  name: 'App',
-  components: {
-    NavHeader
-  },
-  setup() {
-    const currentToken = localStorage.getItem('token')
-    
-    if (currentToken != null) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
-    }
-    const store = useUserStore();
-
-    return { store };
-  }
-    
-}
-</script>
-
-
 <style>
 :root{
   --green-background: rgb(84, 134, 84);

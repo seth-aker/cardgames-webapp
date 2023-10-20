@@ -31,8 +31,12 @@ export default {
       this.startTimer();
     },
     watch: {
-      isGameOver() {
-        this.stopTimer();
+      isGameOver(newValue, oldValue) {
+        if(oldValue === false) {
+          this.stopTimer();
+        } else {
+          this.startTimer();
+        }
       }
     }
     

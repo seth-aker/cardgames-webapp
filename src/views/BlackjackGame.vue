@@ -5,14 +5,16 @@ import BlackjackService from '@/services/BlackjackService';
 import CardContainer from '@/components/Blackjack/CardContainer.vue';
 import BlackjackUI from '@/components/Blackjack/BlackjackUI.vue';
 import AsideBlackjack from '@/components/Blackjack/AsideBlackjack.vue';
+import DisplayGameOver from '@/components/DisplayGameOver.vue';
 import { ref } from 'vue';
 
-const hiddenFirst = ref(true)
+
 const bjStore = useBlackjackStore();
 const store = useGameInfoStore();
 const error = ref(null);
 
 const newGame = async () => {
+    bjStore.$reset();
     try {
         const response = await BlackjackService.newGame();
         if(!response.status === 200) {
@@ -26,17 +28,18 @@ const newGame = async () => {
     }
 }
 
+
 newGame();
-store.pageTitle = "Let's Play Some Blackjack!"
+store.pageTitle = "Let's Play Some Blackjack!";
 </script>
 
 
 <template>
     <div class="flex">
-        <aside-blackjack @revealHidden="hiddenFirst = false"></aside-blackjack>
+        <aside-blackjack></aside-blackjack>
         <main>
             <div class="dealer">
-                <card-container :hand="bjStore.dealer.hand" :hiddenFirst="hiddenFirst" />
+                <card-container :hand="bjStore.dealer.hand" :hiddenFirst="bjStore.isDealerCardHidden" />
             </div>
             <div class="player">
                 <card-container :hand="bjStore.player.hand" :hiddenFirst="false" />
@@ -53,8 +56,8 @@ store.pageTitle = "Let's Play Some Blackjack!"
                 <blackjack-u-i  class="ui" :class="{show: bjStore.showUi}"/>
             </div>
         </main>
+        <display-game-over @newGame="newGame" v-show="bjStore.isGameOver"></display-game-over>
     </div>
-    
     
 </template>
 

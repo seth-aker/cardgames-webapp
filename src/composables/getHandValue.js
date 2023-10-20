@@ -33,7 +33,7 @@ const getHandValue = (hand) => {
         handSum -= 10;
         aceCount--;
     }
-    return { handSum };
+    return handSum;
 }
 
 export default getHandValue;

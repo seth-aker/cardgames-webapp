@@ -40,7 +40,12 @@ export default {
                 if (response.status == 200) {
                 this.userStore.setAuthToken(response.data.token);
                 this.userStore.setUser(response.data.user)
-                this.$router.push({name:'main-menu'});
+                if(this.$route.query.redirect != '') {
+                    this.$router.push(this.$route.query.redirect)
+                } else {
+                    this.$router.push({name: 'main-menu'})
+                }
+                // this.$router.push({name:'main-menu'});
             }
             })
             .catch(error => {
