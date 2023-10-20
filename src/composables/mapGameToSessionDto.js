@@ -1,5 +1,6 @@
 
 const mapGameToSessionDto = (bjStore, infoStore) => {
+    
     const sessionDTO = bjStore.sessionDTO;
     sessionDTO.deck.cards = bjStore.player.hand.concat(bjStore.dealer.hand);
    
@@ -7,7 +8,7 @@ const mapGameToSessionDto = (bjStore, infoStore) => {
     sessionDTO.round++;
     sessionDTO.time_seconds = infoStore.gameTimeSec;
 
-    return { sessionDTO }
+    return sessionDTO 
 };
 
 export default mapGameToSessionDto;
