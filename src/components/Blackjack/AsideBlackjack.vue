@@ -49,18 +49,28 @@ const hit = async () => {
         bjStore.player.wallet += (bjStore.player.wager * 2);
         bjStore.player.wager = 0;
         try {
-            bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
         } catch (err) {
             console.log(err.message)
         }
+        clearHands();
     }
     if(bjStore.playerHandTotal > 21) {
         bjStore.player.wager = 0;
         try {
-            bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
         } catch (err) {
             console.log(err.message)
         }
+        clearHands();
     }
 }
 
@@ -72,7 +82,11 @@ const calculateWinner = async () => {
         const session = mapGameToSessionDto(bjStore, infoStore);
         bjStore.sessionDTO = session;
         try {
-            bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
         } catch (err) {
             console.log(err.message)
         }
@@ -82,7 +96,11 @@ const calculateWinner = async () => {
         const  session  = mapGameToSessionDto(bjStore, infoStore);
         bjStore.sessionDTO = session;
         try {
-            bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
         } catch (err) {
             console.log(err.message)
         }
@@ -93,11 +111,20 @@ const calculateWinner = async () => {
         const session = mapGameToSessionDto(bjStore, infoStore);
         bjStore.sessionDTO = session;
         try {
-            bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
         } catch (err) {
             console.log(err.message)
         }
     }
+    clearHands();
+}
+const clearHands = () => {
+    bjStore.player.hand = [];
+    bjStore.dealer.hand = [];
     bjStore.showUi = true;
 }
 </script>

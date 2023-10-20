@@ -5,7 +5,7 @@ import { useBlackjackStore } from '@/pinia/blackjack';
 import { useGameInfoStore } from "@/pinia/gameInfo";
 import checkForNaturals from "@/composables/checkForNaturals"
 import BlackjackService from '@/services/BlackjackService';
-import { mapGameToSessionDto } from '@/composables/mapGameToSessionDto'
+import mapGameToSessionDto from '@/composables/mapGameToSessionDto'
 const bjStore = useBlackjackStore();
 const infoStore = useGameInfoStore();
 //series of nested timeouts to deal cards to each player
@@ -19,9 +19,9 @@ const dealRound = async () => {
             setTimeout(() => {
                 bjStore.dealer.hand.push(bjStore.sessionDTO.deck.cards.shift())
                 processResults();
-            }, 1000)
-        }, 1000)
-    }, 1000)
+            }, 750)
+        }, 750)
+    }, 750)
 }
 const processResults = async () => {
     const deckId = bjStore.sessionDTO.deck.deck_id;
@@ -30,19 +30,46 @@ const processResults = async () => {
 
     if(hasDealerNatural && hasPlayerNatural) {
         resetWager();
+        bjStore.sessionDTO = mapGameToSessionDto(bjStore, infoStore);
+        try {
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
+        } catch (err) {
+            console.log(err.message)
+        }
+        clearHands();
     } else if (hasDealerNatural) {
         console.log("DEALER")
         bjStore.player.wager = 0;
-        bjStore.sessionDTO = mapGameToSessionDto(bjStore, infoStore)
-        bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+        bjStore.sessionDTO = mapGameToSessionDto(bjStore, infoStore);
+        try {
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
+        } catch (err) {
+            console.log(err.message)
+        }
+        clearHands();
     } else if (hasPlayerNatural) {
         console.log("PLAYER")
         bjStore.player.wallet += (bjStore.player.wager * 1.5);
         bjStore.player.wager = 0;
-        bjStore.sessionDTO = mapGameToSessionDto(bjStore, infoStore)
-        bjStore.sessionDTO = await BlackjackService.newRound(deckId, bjStore.sessionDTO)
-    } else {
-        console.log("NONE")
+        bjStore.sessionDTO = mapGameToSessionDto(bjStore, infoStore);
+        try {
+            const response = await BlackjackService.newRound(deckId, bjStore.sessionDTO);
+            if(!response.status === 200) {
+            throw new Error("Error connecting to server")
+            }
+            bjStore.sessionDTO = response.data;
+        } catch (err) {
+            console.log(err.message)
+        }
+        clearHands();
     }
 
 }
@@ -60,10 +87,11 @@ const resetWager = () => {
     bjStore.player.wager = 0;
 }
 
-// const makeWager = () => {
-//     bjStore.showUi = false;
-//     dealCards()
-// }
+const clearHands = () => {
+    bjStore.player.hand = [];
+    bjStore.dealer.hand = [];
+    bjStore.showUi = true;
+}
 </script>
 
 <template>

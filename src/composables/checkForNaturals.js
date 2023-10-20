@@ -7,7 +7,7 @@ const checkForNaturals = (hand) => {
         isNatural = true;
     }
 
-    return { isNatural }
+    return isNatural;
 }
 
 export default checkForNaturals;
