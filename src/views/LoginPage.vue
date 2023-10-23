@@ -3,11 +3,12 @@
         <div class="login">
             <form @submit.prevent="signIn" class="login-form">
                 <h2>Login</h2>
-                <p v-show="$route.redirectedFrom">Please Sign In to Continue to <span style="text-transform: capitalize;">{{ $route.redirectedFrom.name }}</span></p>
+                <p v-if="$route.redirectedFrom">Please Sign In to Save Game</p>
                 <p v-show="invalidCredentials">Invalid username or password</p>
                 <input type="text" v-model="user.username" id="username" placeholder="Username" required autofocus>
                 <input type="password" v-model="user.password" id="password" placeholder="Password" required>
                 <input type="submit" value="Sign In" class="button"/>
+                <router-link :to="{name: 'register'}">Don't have an account? Click here to register</router-link>
             </form>
         </div>
     </main>
@@ -22,8 +23,7 @@ export default {
     setup() {
         const userStore = useUserStore();
         const gameInfoStore = useGameInfoStore();
-        gameInfoStore.$reset();
-        return { userStore }
+        return { userStore, gameInfoStore }
     },
     data() {
         return {
@@ -41,20 +41,14 @@ export default {
                 if (response.status == 200) {
                 this.userStore.setAuthToken(response.data.token);
                 this.userStore.setUser(response.data.user)
-                if(this.$route.query.redirect != '') {
-                    this.$router.push(this.$route.query.redirect)
-                } else {
-                    this.$router.push({name: 'main-menu'})
-                }
-                // this.$router.push({name:'main-menu'});
+                this.$router.push(this.$route.query.redirect || {name: 'main-menu'});
             }
             })
             .catch(error => {
-            const response = error.response;
-
-            if (response.status === 401) {
-                this.invalidCredentials = true;
-            }
+                // const response = error.response;
+                if (error.response.status === 403) {
+                    this.invalidCredentials = true;
+                }
             });
         }
     }
@@ -97,6 +91,16 @@ input {
 
 .button {
     width: 50%;
+}
+
+a {
+    color: white;
+    font-size: 0.75rem;
+    padding-top: 10px;
+}
+
+a:hover {
+    color: rgb(43, 43, 255);
 }
 </style>
 

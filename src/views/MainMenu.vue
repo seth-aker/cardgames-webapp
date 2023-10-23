@@ -24,8 +24,13 @@
 </template>
 
 <script>
+import { useGameInfoStore } from '@/pinia/gameInfo';
 export default {
     name: 'main-menu',
+    setup() {
+        const infoStore = useGameInfoStore();
+        return { infoStore }
+    },
     data() {
         return {
             newGameActive: false,
@@ -38,7 +43,7 @@ export default {
         }
     },
     created() {
-        this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle)
+        this.infoStore.$reset();
     }
     
 }

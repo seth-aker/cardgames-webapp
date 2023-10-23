@@ -1,11 +1,15 @@
 <script setup>
 import MyButton from '../MyButton.vue';
 import { useBlackjackStore } from "@/pinia/blackjack"
-import { defineEmits } from 'vue';
+
 
 const bjStore = useBlackjackStore();
 
-const emit = defineEmits(['endGame'])
+const cashOut = () => {
+    bjStore.cashedOut = true;
+    bjStore.clearHands();
+    bjStore.showRoundOver = false;
+}
 
 
 const dealRound = () => {
@@ -18,8 +22,10 @@ const dealRound = () => {
     <div class="overlay">
         <div class="overlay-content">
             <h1>{{ bjStore.roundResult }}</h1>
+            <p>Total Earnings: ${{ bjStore.earnings }}</p>
+            <p>Wallet: ${{ bjStore.player.wallet }}</p>
             <MyButton class="btn" :on-click="dealRound">Play Again</MyButton>
-            <MyButton class="btn" @click="emit('endGame')">Cash Out</MyButton>
+            <MyButton class="btn" :on-click="cashOut">Cash Out</MyButton>
         </div>
     </div>
 </template>
@@ -45,8 +51,11 @@ const dealRound = () => {
     top: 200px;
     width: 350px;
     align-items: center;
+    padding: 15px;
 }
-
+h1 {
+    margin: 10px;
+}
 .btn {
     width: 75%;
     margin: 10px;

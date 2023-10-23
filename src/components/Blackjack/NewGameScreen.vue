@@ -38,8 +38,15 @@ const emit = defineEmits(['newGame'])
     top: 200px;
     width: 350px;
     align-items: center;
+    padding: 15px;
+}
+h2 {
+    margin: 10px;
 }
 
+p {
+    width: 80%;
+}
 .btn {
     width: 75%;
     margin: 10px;

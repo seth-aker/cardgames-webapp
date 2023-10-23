@@ -4,7 +4,7 @@ import axios from "axios";
 export const useUserStore = defineStore('userStore', {
     state: () => ({
         token: '',
-        user: {},
+        user: null,
     }),
     getters: {
         isLoggedIn: (state) => {
@@ -13,14 +13,14 @@ export const useUserStore = defineStore('userStore', {
     },
     actions: {
         setAuthToken(token) {
-            this.token = token || '';
+            this.token = token;
             localStorage.setItem('token', token);
             if(token != null) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }
         },
         setUser(user) {
-            this.user = user || {};
+            this.user = user;
             localStorage.setItem('user', JSON.stringify(user));
 
         },

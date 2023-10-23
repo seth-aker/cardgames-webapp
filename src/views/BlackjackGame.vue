@@ -11,13 +11,23 @@ import PointsDisplay from '@/components/Blackjack/PointsDisplay.vue';
 import getHandValue from '@/composables/getHandValue';
 import deepcopy from 'deepcopy';
 import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import EndOfRoundScreen from '@/components/Blackjack/EndOfRoundScreen.vue';
 
 
 const bjStore = useBlackjackStore();
 const store = useGameInfoStore();
 const error = ref(null);
+
 const showNGScreen = ref(true);
+
+const redirectedFrom = () => {
+    const route = useRoute();
+    if(route.redirectedFrom !== undefined) {
+        showNGScreen.value = false;
+    }
+}
+redirectedFrom();
 
 const visibleHandTotal = computed(() => {
     const dealerHand = deepcopy(bjStore.dealer.hand);

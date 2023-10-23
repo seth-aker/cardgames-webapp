@@ -46,7 +46,7 @@ const routes = [
     name: 'blackjack',
     component: BlackjackGame,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     }
   },
   {

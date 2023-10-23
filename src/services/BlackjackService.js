@@ -13,6 +13,6 @@ export default {
     },
     
     saveFinalStats(gameSession) {
-        return axios.post(`/blackjack/save_stats`, gameSession)
+        return axios.put(`/blackjack/game_over`, gameSession)
     }
 }

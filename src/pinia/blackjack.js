@@ -31,6 +31,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
         earnings: 0,
         showRoundOver: false,
         roundResult: "",
+        cashedOut: false,
 
         chips: [{value: 1, src: require('@/assets/poker-chip-grey.png')},
                 {value: 5, src: require('@/assets/poker-chip-red.png')},
@@ -49,7 +50,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
             return getHandValue(state.dealer.hand)
         },
         isGameOver(state) {
-            return state.player.wallet === 0 && state.player.wager === 0;
+            return (state.player.wallet === 0 && state.player.wager === 0) || state.cashedOut;
         }
     },
     actions: {
@@ -130,7 +131,11 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                 this.player.wallet += (this.player.wager * 2);
                 this.player.wager = 0;
                 this.updateEarnings();
-                this.roundResult = "Dealer Busted!"
+                if(this.dealerHandTotal > 21) {
+                    this.roundResult = "Dealer Busted!"
+                } else {
+                    this.roundResult = "You win"
+                }
                 this.sessionDTO = this.mapGameToSessionDto();
                 try {
                     const response = await BlackjackService.newRound(deckId, this.sessionDTO);
@@ -188,9 +193,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                 this.dealer.hand.push(this.sessionDTO.deck.cards.shift())
                 await sleep(750);
                 this.processResults();
-            } else {
-                alert("Cannot wager $0")
-            }
+            } 
         },
         async processResults() {
             const infoStore = useGameInfoStore();
@@ -199,6 +202,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
             const hasPlayerNatural = checkForNaturals(this.player.hand);
         
             if(hasDealerNatural && hasPlayerNatural) {
+                this.isDealerCardHidden = false;
                 this.player.wallet += this.player.wager;
                 this.player.wager = 0;
                 this.updateEarnings();
@@ -215,6 +219,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                     console.log(err.message)
                 }
             } else if (hasDealerNatural) {
+                this.isDealerCardHidden = false;
                 this.player.wager = 0;
                 this.updateEarnings();
                 this.sessionDTO = mapGameToSessionDto(this, infoStore);
@@ -230,6 +235,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                     console.log(err.message)
                 }
             } else if (hasPlayerNatural) {
+                this.isDealerCardHidden = false;
                 this.player.wallet += (this.player.wager * 1.5);
                 this.player.wager = 0;
                 this.updateEarnings();

@@ -7,6 +7,9 @@
         <span><game-timer :isGameOver="matchStore.isGameOver" /></span>
       </aside>
       <main>
+        <div class="loading" >
+          <img v-show="matchStore.cards.length === 0" :src="require('../assets/Spinner-1s-200px.gif')" alt="Loading...">
+        </div>
         <matching-card v-for="(card, index) in matchStore.cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
       <display-win v-show="matchStore.isGameOver" /> 
@@ -73,6 +76,14 @@ export default {
 </script>
 
 <style scoped>
+  .loading {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+  }
+
   #matching{
     height: calc(100vh - 4rem);
     display: flex;
