@@ -24,7 +24,12 @@ button {
     color: white;
     background-color: var(--green-hover);
     border-radius: var(--default-radius);
+    border-style: outset;
+    border-color: white;
+}
 
+button:active {
+    border-style: inset;
 }
 
 button:hover {

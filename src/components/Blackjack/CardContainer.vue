@@ -1,11 +1,13 @@
 <template>
-        <blackjack-card class="card-container" 
-                            v-for="(card, index) in hand" 
-                            :key="index" 
-                            :class="{hidden: index === 0 && hiddenFirst} " 
-                            :card="card"
-                            :style="{right: offset(index)}">
-        </blackjack-card>
+        <div class="card-container">
+            <blackjack-card class="cards" 
+                                v-for="(card, index) in hand" 
+                                :key="index" 
+                                :class="{hidden: index === 0 && hiddenFirst} " 
+                                :card="card"
+                                :style="{left: offset(index)}">
+            </blackjack-card>
+        </div>
 </template>
 
 <script>
@@ -19,17 +21,20 @@ export default {
     props: ['hand', 'hiddenFirst'],
     methods: {
         offset(index) {
-            return `${(index)*75}px`
+            return `calc(35vw + ${(index)*75}px)`
         }
     }
 }
 </script>
 
 <style scoped>
-.card-container {
-    position: relative;
-    /* height: 200px; 
-    width: 130px;  */
+.card-container{
+    display: flex;
+    align-items: flex-start;
+}
+.cards {
+    position: absolute;
+    height: 30vh;
     width: 10vw;
     
 }

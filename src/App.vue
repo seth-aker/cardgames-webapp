@@ -1,10 +1,12 @@
 <script setup>
 import NavHeader from '@/components/NavHeader.vue'
 import axios from 'axios';
-
+import { useUserStore } from './pinia/user';
+const userStore = useUserStore();
 const currentToken = localStorage.getItem('token')
 if (currentToken != null) {
-axios.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
+  userStore.token = currentToken;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${currentToken}`;
 }
 
 

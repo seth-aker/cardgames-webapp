@@ -2,6 +2,8 @@ import { defineStore } from "pinia";
 import getHandValue from "@/composables/getHandValue";
 import BlackjackService from "@/services/BlackjackService";
 import { useGameInfoStore } from "./gameInfo";
+import checkForNaturals from "@/composables/checkForNaturals";
+import mapGameToSessionDto from "@/composables/mapGameToSessionDto";
 export const useBlackjackStore = defineStore('blackjackStore', {
     state: () => ({
         
@@ -27,6 +29,8 @@ export const useBlackjackStore = defineStore('blackjackStore', {
         showUi: true,
         isDealerCardHidden: true,
         earnings: 0,
+        showRoundOver: false,
+        roundResult: "",
 
         chips: [{value: 1, src: require('@/assets/poker-chip-grey.png')},
                 {value: 5, src: require('@/assets/poker-chip-red.png')},
@@ -51,16 +55,20 @@ export const useBlackjackStore = defineStore('blackjackStore', {
     actions: {
          async stand() {
             const deckId = this.sessionDTO.deck.deck_id;
+            const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time))
             this.isDealerCardHidden = false
             
             while(this.dealerHandTotal < 17) {
+                await sleep(750)
                 try {
                     let response = await BlackjackService.drawCard(deckId, 1);
                     if(!response.status === 200) {
                         throw new Error("Error connecting to server")
                     }
+                    
                     this.dealer.hand.push(response.data.cards[0]);
                     this.cardsRemaining = response.data.remaining;
+                    
                 } catch (err) {
                     console.log(err.message)
                 }
@@ -84,6 +92,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
             if(this.playerHandTotal === 21) {
                 this.player.wallet += (this.player.wager * 2);
                 this.player.wager = 0;
+                this.updateEarnings();
                 try {
                     this.sessionDTO = this.mapGameToSessionDto()
                     const response = await BlackjackService.newRound(deckId, this.sessionDTO);
@@ -94,11 +103,13 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                 } catch (err) {
                     console.log(err.message)
                 }
-                this.clearHands();
+                this.showRoundOver = true;
+                this.roundResult = "Blackjack!"
             }
         
             if(this.playerHandTotal > 21) {
                 this.player.wager = 0;
+                this.updateEarnings();
                 try {
                     this.sessionDTO = this.mapGameToSessionDto();
                     const response = await BlackjackService.newRound(deckId, this.sessionDTO);
@@ -109,7 +120,8 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                 } catch (err) {
                     console.log(err.message)
                 }
-                this.clearHands();
+                this.showRoundOver = this.computeShowRoundOver();
+                this.roundResult = "Bust"
             }
         },
         async calculateWinner() {
@@ -117,7 +129,8 @@ export const useBlackjackStore = defineStore('blackjackStore', {
             if(this.dealerHandTotal > 21 || this.dealerHandTotal < this.playerHandTotal) {
                 this.player.wallet += (this.player.wager * 2);
                 this.player.wager = 0;
-              
+                this.updateEarnings();
+                this.roundResult = "Dealer Busted!"
                 this.sessionDTO = this.mapGameToSessionDto();
                 try {
                     const response = await BlackjackService.newRound(deckId, this.sessionDTO);
@@ -131,7 +144,9 @@ export const useBlackjackStore = defineStore('blackjackStore', {
             } 
             else if(this.dealerHandTotal > this.playerHandTotal) {
                 this.player.wager = 0;
+                this.updateEarnings();
                 this.sessionDTO = this.mapGameToSessionDto();
+                this.roundResult = "Dealer Wins"
                 try {
                     const response = await BlackjackService.newRound(deckId, this.sessionDTO);
                     if(!response.status === 200) {
@@ -145,7 +160,9 @@ export const useBlackjackStore = defineStore('blackjackStore', {
              else if(this.dealerHandTotal === this.playerHandTotal) {
                 this.player.wallet += this.player.wager;
                 this.player.wager = 0;
+                this.updateEarnings();
                 this.sessionDTO = this.mapGameToSessionDto();
+                this.roundResult = "It's a tie! Push"
                 try {
                     const response = await BlackjackService.newRound(deckId, this.sessionDTO);
                     if(!response.status === 200) {
@@ -156,7 +173,79 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                     console.log(err.message)
                 }
             }
-            this.clearHands();
+            this.showRoundOver = this.computeShowRoundOver();
+        },
+        async dealRound() {
+            const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time))
+            if(this.player.wager != 0) {
+                this.showUi = false    
+                this.player.hand.push(this.sessionDTO.deck.cards.shift())
+                await sleep(750);
+                this.dealer.hand.push(this.sessionDTO.deck.cards.shift())
+                await sleep(750);
+                this.player.hand.push(this.sessionDTO.deck.cards.shift())
+                await sleep(750);
+                this.dealer.hand.push(this.sessionDTO.deck.cards.shift())
+                await sleep(750);
+                this.processResults();
+            } else {
+                alert("Cannot wager $0")
+            }
+        },
+        async processResults() {
+            const infoStore = useGameInfoStore();
+            const deckId = this.sessionDTO.deck.deck_id;
+            const hasDealerNatural = checkForNaturals(this.dealer.hand);
+            const hasPlayerNatural = checkForNaturals(this.player.hand);
+        
+            if(hasDealerNatural && hasPlayerNatural) {
+                this.player.wallet += this.player.wager;
+                this.player.wager = 0;
+                this.updateEarnings();
+                this.showRoundOver = true;
+                this.roundResult = "Both Dealer and Player Got Naturals! Push"
+                this.sessionDTO = mapGameToSessionDto(this, infoStore);
+                try {
+                    const response = await BlackjackService.newRound(deckId, this.sessionDTO);
+                    if(!response.status === 200) {
+                    throw new Error("Error connecting to server")
+                    }
+                    this.sessionDTO = response.data;
+                } catch (err) {
+                    console.log(err.message)
+                }
+            } else if (hasDealerNatural) {
+                this.player.wager = 0;
+                this.updateEarnings();
+                this.sessionDTO = mapGameToSessionDto(this, infoStore);
+                this.showRoundOver = this.computeShowRoundOver();
+                this.roundResult = "Dealer got a Natural!"
+                try {
+                    const response = await BlackjackService.newRound(deckId, this.sessionDTO);
+                    if(!response.status === 200) {
+                    throw new Error("Error connecting to server")
+                    }
+                    this.sessionDTO = response.data;
+                } catch (err) {
+                    console.log(err.message)
+                }
+            } else if (hasPlayerNatural) {
+                this.player.wallet += (this.player.wager * 1.5);
+                this.player.wager = 0;
+                this.updateEarnings();
+                this.sessionDTO = mapGameToSessionDto(this, infoStore);
+                this.showRoundOver = true;
+                this.roundResult = "You got a Natural"
+                try {
+                    const response = await BlackjackService.newRound(deckId, this.sessionDTO);
+                    if(!response.status === 200) {
+                    throw new Error("Error connecting to server")
+                    }
+                    this.sessionDTO = response.data;
+                } catch (err) {
+                    console.log(err.message)
+                }
+            }
         },
         async clearHands() {
             setTimeout(() => {
@@ -165,7 +254,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
                 this.dealer.hand = [];
                 this.showUi = true;
                 this.updateEarnings();
-            },1000)
+            }, 150)
             
         },
         mapGameToSessionDto() {
@@ -179,6 +268,13 @@ export const useBlackjackStore = defineStore('blackjackStore', {
         },
         updateEarnings() {
             this.earnings = (this.player.wallet - 500);
+        },
+        computeShowRoundOver() {
+            if(this.player.wallet != 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 })

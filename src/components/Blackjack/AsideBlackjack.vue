@@ -24,11 +24,35 @@ const hit = () => {
             <p>Earnings: ${{ bjStore.earnings }}</p>
             <p>Cards Remaining: {{ bjStore.cardsRemaining }}</p>
             <game-timer :isGameOver="bjStore.isGameOver"></game-timer>
-
-            <my-button :on-click="stand">Stand</my-button>
-            <my-button :on-click="hit">Hit</my-button>
+        </div>
+        <div class="btns">
+            <my-button class="btn" :on-click="stand">Stand</my-button>
+            <my-button class="btn" :on-click="hit">Hit</my-button>
         </div>
         
     </aside>
 
 </template>
+
+<style scoped>
+.game-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 10px;
+}
+
+p {
+    text-align: left;
+}
+.btns {
+    padding: 0 10px 0 10px ;
+}
+.btn {
+    
+    height: 50px;
+    margin-bottom: 5px;
+
+}
+
+</style>

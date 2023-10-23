@@ -6,14 +6,29 @@ import CardContainer from '@/components/Blackjack/CardContainer.vue';
 import BlackjackUI from '@/components/Blackjack/BlackjackUI.vue';
 import AsideBlackjack from '@/components/Blackjack/AsideBlackjack.vue';
 import DisplayGameOver from '@/components/DisplayGameOver.vue';
-import { ref } from 'vue';
+import NewGameScreenVue from '@/components/Blackjack/NewGameScreen.vue';
+import PointsDisplay from '@/components/Blackjack/PointsDisplay.vue';
+import getHandValue from '@/composables/getHandValue';
+import deepcopy from 'deepcopy';
+import { computed, ref } from 'vue';
+import EndOfRoundScreen from '@/components/Blackjack/EndOfRoundScreen.vue';
 
 
 const bjStore = useBlackjackStore();
 const store = useGameInfoStore();
 const error = ref(null);
+const showNGScreen = ref(true);
+
+const visibleHandTotal = computed(() => {
+    const dealerHand = deepcopy(bjStore.dealer.hand);
+    if(bjStore.isDealerCardHidden) {
+        dealerHand.shift();
+    }
+    return getHandValue(dealerHand)
+})
 
 const newGame = async () => {
+    showNGScreen.value = false;
     bjStore.$reset();
     try {
         const response = await BlackjackService.newGame();
@@ -22,14 +37,13 @@ const newGame = async () => {
         }
         bjStore.sessionDTO = response.data;
         bjStore.sessionId = response.data.session_id;
-        bjStore.cardsRemaining = response.data.cards_remaining;
+        bjStore.cardsRemaining = response.data.deck.remaining;
     } catch(err) {
         error.value = err.message;
     }
 }
 
 
-newGame();
 store.pageTitle = "Let's Play Some Blackjack!";
 </script>
 
@@ -40,9 +54,11 @@ store.pageTitle = "Let's Play Some Blackjack!";
         <main>
             <div class="dealer">
                 <card-container :hand="bjStore.dealer.hand" :hiddenFirst="bjStore.isDealerCardHidden" />
+                <points-display class="points-display" :hand-value="visibleHandTotal" name="Dealer"></points-display>
             </div>
             <div class="player">
                 <card-container :hand="bjStore.player.hand" :hiddenFirst="false" />
+                <points-display class="points-display" :hand-value="bjStore.playerHandTotal" name="Player"></points-display>
             </div>
             <div class="ui-container">
                 <div class="money-info">
@@ -57,6 +73,8 @@ store.pageTitle = "Let's Play Some Blackjack!";
             </div>
         </main>
         <display-game-over @newGame="newGame" v-show="bjStore.isGameOver"></display-game-over>
+        <NewGameScreenVue v-show="showNGScreen" @newGame="newGame"></NewGameScreenVue>
+        <EndOfRoundScreen v-show="bjStore.showRoundOver"></EndOfRoundScreen>
     </div>
     
 </template>
@@ -77,14 +95,21 @@ aside {
     width: 10vw;
     height: 100vw;
     background-color: var(--green-hover);
-    border-right: solid 3px white;
+    border-right: solid 3px var(--green-background);
 }   
 .dealer, .player {
     height: 200px;
     display: flex;
     justify-content: center;
     max-width: 1100px;
-    width: 100%
+    width: 100%;
+    margin: 20px
+}
+
+.points-display {
+    position: absolute;
+    right: 10vw;
+    align-self: center;
 }
 .ui-container {
     position: absolute ;
