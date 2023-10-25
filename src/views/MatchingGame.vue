@@ -2,7 +2,7 @@
   <div id="matching">
       <aside>
         <h2>Match all the cards to win!</h2>
-        <span><p>Moves: {{matchStore.matchingAttempts}}</p></span>
+        <span><p>Moves: {{ matchStore.matchingAttempts }}</p></span>
         <span><p>Cards Matched : {{ matchStore.cardsMatched.length }}/24</p></span>
         <span><game-timer :isGameOver="matchStore.isGameOver" /></span>
       </aside>

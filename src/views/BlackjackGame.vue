@@ -1,6 +1,7 @@
 <script setup>
 import { useBlackjackStore } from '@/pinia/blackjack';
 import { useGameInfoStore } from '@/pinia/gameInfo';
+import { useUserStore } from '@/pinia/user';
 import BlackjackService from '@/services/BlackjackService';
 import CardContainer from '@/components/Blackjack/CardContainer.vue';
 import BlackjackUI from '@/components/Blackjack/BlackjackUI.vue';
@@ -11,23 +12,43 @@ import PointsDisplay from '@/components/Blackjack/PointsDisplay.vue';
 import getHandValue from '@/composables/getHandValue';
 import deepcopy from 'deepcopy';
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router'
 import EndOfRoundScreen from '@/components/Blackjack/EndOfRoundScreen.vue';
 
-
+const userStore = useUserStore();
 const bjStore = useBlackjackStore();
 const store = useGameInfoStore();
 const error = ref(null);
+const router = useRouter();
 
 const showNGScreen = ref(true);
 
-const redirectedFrom = () => {
-    const route = useRoute();
-    if(route.redirectedFrom !== undefined) {
+
+const gameOver = async() => {
+    if(userStore.isLoggedIn) {
+        try {
+            const response = await BlackjackService.saveFinalStats(bjStore.sessionDTO);
+            if(response.status === 204) {
+                bjStore.gameSaved = true;
+            }
+            else {
+                throw new Error(response.statusText)
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    } else {
+        router.push({name: 'login', query: {redirect: "/blackjack" }})
+     }
+}
+
+const checkReturnedFromLogin = () => {
+    if(bjStore.playerHandTotal != 0) {
         showNGScreen.value = false;
+        gameOver();
     }
 }
-redirectedFrom();
+checkReturnedFromLogin();
 
 const visibleHandTotal = computed(() => {
     const dealerHand = deepcopy(bjStore.dealer.hand);
@@ -82,7 +103,7 @@ store.pageTitle = "Let's Play Some Blackjack!";
                 <blackjack-u-i  class="ui" :class="{show: bjStore.showUi}"/>
             </div>
         </main>
-        <display-game-over @newGame="newGame" v-show="bjStore.isGameOver"></display-game-over>
+        <display-game-over @gameOver="gameOver" @newGame="newGame" v-show="bjStore.isGameOver"></display-game-over>
         <NewGameScreenVue v-show="showNGScreen" @newGame="newGame"></NewGameScreenVue>
         <EndOfRoundScreen v-show="bjStore.showRoundOver"></EndOfRoundScreen>
     </div>

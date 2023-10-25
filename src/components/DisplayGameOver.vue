@@ -1,37 +1,16 @@
 <script setup>
 import { useBlackjackStore } from '@/pinia/blackjack';
 import { useGameInfoStore } from '@/pinia/gameInfo';
-import { useUserStore } from '@/pinia/user';
-import { defineEmits, ref } from 'vue';
+import { defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
 import MyButton from './MyButton.vue';
-import BlackjackService from '@/services/BlackjackService';
 const bjStore = useBlackjackStore();
 const infoStore = useGameInfoStore();
-const userStore = useUserStore();
-const emit = defineEmits(['newGame'])
-const gameSaved = ref(false)
+
+const emit = defineEmits(['newGame', 'gameOver'])
 const router = useRouter();
 
-const gameOver = async() => {
-    if(userStore.isLoggedIn) {
-        try {
-            const response = await BlackjackService.saveFinalStats(bjStore.sessionDTO);
-            if(response.status === 204) {
-                gameSaved.value = true;
-            }
-            else {
-                throw new Error(response.statusText)
-            }
-        } catch (error) {
-            console.log(error.message);
-        }
-    } else {
-            router.push({name: 'login', query: {redirect: "/blackjack" }})
-            }
-       
 
-}
 </script>
 
 <template>
@@ -42,8 +21,8 @@ const gameOver = async() => {
             <p>Total Time: {{ infoStore.gameTime }}</p>
             <p>Rounds Played: {{ bjStore.sessionDTO.round }}</p>
             <my-button class="btn" @click="emit('newGame')">New Game</my-button>
-            <my-button class="btn" v-show="!gameSaved" @click="gameOver">Post to Scoreboard</my-button>
-            <my-button class="btn" v-show="gameSaved" @click="router.push({name: 'scoreboard'})">View Scoreboard</my-button>
+            <my-button class="btn" v-show="!bjStore.gameSaved" @click="emit('gameOver')">Post to Scoreboard</my-button>
+            <my-button class="btn" v-show="bjStore.gameSaved" @click="router.push({name: 'scoreboard'})">View Scoreboard</my-button>
             <my-button class="btn" @click="router.push({name: 'main-menu'})">Main Menu</my-button>
         </div>
     </div>

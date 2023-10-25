@@ -32,6 +32,7 @@ export const useBlackjackStore = defineStore('blackjackStore', {
         showRoundOver: false,
         roundResult: "",
         cashedOut: false,
+        gameSaved: false,
 
         chips: [{value: 1, src: require('@/assets/poker-chip-grey.png')},
                 {value: 5, src: require('@/assets/poker-chip-red.png')},
