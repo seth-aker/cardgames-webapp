@@ -5,6 +5,7 @@ import ComingSoon from '@/views/ComingSoon.vue'
 import RegisterPage from '@/views/RegisterPage.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import BlackjackGame from '@/views/BlackjackGame.vue'
+import ScoreboardView from '@/views/ScoreboardView.vue'
 import { useUserStore } from '@/pinia/user'
 
 
@@ -48,6 +49,15 @@ const routes = [
     meta: {
       requiresAuth: false
     }
+  },
+  {
+    path: '/scoreboard',
+    name: 'scoreboard',
+    component: ScoreboardView,
+    meta: {
+      requiresAuth: false
+    }
+
   },
   {
     path: '/coming_soon',
