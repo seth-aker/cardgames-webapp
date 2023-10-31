@@ -55,4 +55,14 @@ p {
 
 }
 
+@media only screen and (max-width: 600px) {
+    .game-info {
+        display: none;
+    }
+    .btns {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
 </style>

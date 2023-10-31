@@ -42,4 +42,11 @@ export default {
     
     
 }
+
+@media only screen and (max-width: 600px){
+    .chip img {
+        width: 15vw;
+        height: 15vw;
+    }
+}
 </style>

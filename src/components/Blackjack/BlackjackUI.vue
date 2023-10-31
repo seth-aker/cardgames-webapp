@@ -56,5 +56,26 @@ const resetWager = () => {
     margin: 5px;
 }
 
+@media only screen and (max-width: 600px){
+    .ui {
+        border-radius: 0;
+    }
+    
+    .chips {
+        flex-wrap: wrap;
+    }
+
+    .btns {
+        width: 20vw;
+    }
+
+    .wager-btn {
+        height: 15vw;
+        width: 20vw;
+    }
+
+
+}
+
 
 </style>

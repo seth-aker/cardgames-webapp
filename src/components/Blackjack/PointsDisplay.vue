@@ -36,5 +36,18 @@ const props = defineProps({
     border: solid 2px var(--green-hover-light);
     border-radius: 50px;
 }
+
+@media only screen and (max-width: 600px){
+    .point-display {
+        height: 5vh;
+        font-size: smaller;
+    }
+    .points {
+        height: 35px;
+        width: 35px;
+        border-radius: 25px;
+        
+    }
+}
 </style>
 

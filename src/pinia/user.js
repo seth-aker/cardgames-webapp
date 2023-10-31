@@ -3,12 +3,12 @@ import axios from "axios";
 
 export const useUserStore = defineStore('userStore', {
     state: () => ({
-        token: '',
-        user: null,
+        token: localStorage.getItem('token') | null,
+        user: localStorage.getItem('user') | null,
     }),
     getters: {
         isLoggedIn: (state) => {
-            return state.user !== null
+            return state.user !== 0;
         }
     },
     actions: {
@@ -28,7 +28,7 @@ export const useUserStore = defineStore('userStore', {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             this.token = '';
-            this.user = null;
+            this.user = 0;
             axios.defaults.headers.common = {};
         }
     }

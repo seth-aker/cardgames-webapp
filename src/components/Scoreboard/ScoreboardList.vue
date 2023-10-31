@@ -2,7 +2,7 @@
 import { defineProps } from 'vue';
 
 // eslint-disable-next-line no-unused-vars
-const props = defineProps(['scores'])
+const props = defineProps(['scores', 'name'])
 
 const formatTime = (timeSec) => {
     let minutes;
@@ -32,24 +32,50 @@ const formatTime = (timeSec) => {
 
 <template>
     <div class="list-container">
-         <table>
-                <th>Score</th>
-                <th>Username</th>
-                <th>Time</th>
-                <th>Rounds</th>
-            <tr v-for="(listItem, index) in scores" :key="index">
-                <td>{{ listItem.score }}</td>
-                <td>{{ listItem.username }}</td>
-                <td>{{ formatTime(listItem.timeSeconds) }}</td>
-                <td>{{ listItem.rounds }}</td>
-            </tr>
-        </table>
+        <h2>{{ name }}</h2>
+        <div class="table">
+            <table>
+                    <th>Rank</th>
+                    <th>Score</th>
+                    <th>Username</th>
+                    <th>Time</th>
+                    <th>Rounds</th>
+                <tr v-for="(listItem, index) in scores" :key="index">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ listItem.score }}</td>
+                    <td>{{ listItem.username }}</td>
+                    <td>{{ formatTime(listItem.timeSeconds) }}</td>
+                    <td>{{ listItem.rounds }}</td>
+                </tr>
+            </table>
+
+        </div>
     </div>
 
 </template>
 
 <style scoped>
+
 .list-container {
+    background-color: var(--green-hover);
+    margin: 15px;
+    width: 100%;
+}
+.table {
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+}
+
+h2 {
+    margin: 0;
     background-color: var(--green-background);
+    padding: 5px;
+}
+
+table {
+    padding: 5px;
+
 }
 </style>

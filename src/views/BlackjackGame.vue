@@ -84,11 +84,11 @@ store.pageTitle = "Let's Play Some Blackjack!";
         <aside-blackjack></aside-blackjack>
         <main>
             <div class="dealer">
-                <card-container :hand="bjStore.dealer.hand" :hiddenFirst="bjStore.isDealerCardHidden" />
+                <card-container class="card-container" :hand="bjStore.dealer.hand" :hiddenFirst="bjStore.isDealerCardHidden" />
                 <points-display class="points-display" :hand-value="visibleHandTotal" name="Dealer"></points-display>
             </div>
             <div class="player">
-                <card-container :hand="bjStore.player.hand" :hiddenFirst="false" />
+                <card-container class="card-container" :hand="bjStore.player.hand" :hiddenFirst="false" />
                 <points-display class="points-display" :hand-value="bjStore.playerHandTotal" name="Player"></points-display>
             </div>
             <div class="ui-container">
@@ -179,6 +179,54 @@ aside {
 
 .show {
     height: 150px;
+}
+
+@media only screen and (max-width: 600px){
+    .flex {
+        flex-direction: column-reverse;
+    }
+    aside {
+        width: 100%;
+        height: fit-content;
+    }
+
+    main {
+        max-height: none;
+        width: 100%;
+        height: calc(100vh - 3.5rem);
+    }
+    .dealer {
+        flex-direction: column-reverse;
+        justify-content: flex-end;
+        margin: 5px;
+        
+    }
+    .player {
+        margin: 5px;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .card-container {
+        height: 50%;
+        width: 100vw;
+    }
+    .points-display{
+        position: relative;
+        right: inherit;
+        margin-top: 0;
+    }
+    .ui-container {
+        width: 100%;
+        border-radius: 0;
+    }
+    .money-info {
+        width: 100%;
+        border-radius: 0;
+    }
+    .show {
+        height: fit-content;
+    }
 }
 </style>
 

@@ -3,12 +3,12 @@
         <div class="login">
             <form @submit.prevent="signIn" class="login-form">
                 <h2>Login</h2>
-                <p v-if="$route.redirectedFrom">Please Sign In to Save Game</p>
+                <p v-if="$route.redirectedFrom">This game requires an account to play</p>
                 <p v-show="invalidCredentials">Invalid username or password</p>
                 <input type="text" v-model="user.username" id="username" placeholder="Username" required autofocus>
                 <input type="password" v-model="user.password" id="password" placeholder="Password" required>
                 <input type="submit" value="Sign In" class="button"/>
-                <router-link :to="{name: 'register'}">Don't have an account? Click here to register</router-link>
+                <router-link :to="{name: 'register'}">Don't have an account? Click here to register for free</router-link>
             </form>
         </div>
     </main>
