@@ -2,7 +2,7 @@
    <header>
         <div id="left-header">
             <img src="https://www.deckofcardsapi.com/static/img/spade.svg" alt="spade-img">
-            <h1> {{ this.$store.state.pageTitle }} </h1>
+            <h1> {{ gameStore.pageTitle }} </h1>
         </div>
         
         <nav id="links" :class="{display: display}">
@@ -34,7 +34,13 @@
 </template>
 
 <script>
+import { useGameStore } from '@/stores/gameStore.js';
+
 export default {
+    setup() {
+        const gameStore = useGameStore();
+        return { gameStore };
+    },
     data() {
         return {
             display: false
@@ -47,7 +53,7 @@ export default {
         startNewGame() {
             console.log(this.$route)
             if(this.$route.path === "/matching") {
-                this.$store.commit('CLEAR_MATCHING');
+                this.gameStore.clearMatching();
                 this.$router.go(this.$router.currentRoute)
             }
         }

@@ -24,7 +24,15 @@
 </template>
 
 <script>
+import {RouterLink} from 'vue-router'
+import { useGameStore } from '../stores/gameStore'
 export default {
+    name: 'main-menu',
+    components: { RouterLink }, 
+    setup() {
+        const gameStore = useGameStore()
+        return { gameStore }
+    },
     data() {
         return {
             newGameActive: false,
@@ -37,7 +45,7 @@ export default {
         }
     },
     created() {
-        this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle)
+        this.gameStore.updatePageTitle(this.pageTitle)
     }
     
 }

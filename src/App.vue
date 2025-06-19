@@ -5,11 +5,12 @@
 
 <script>
 import NavHeader from '@/components/NavHeader.vue'
-
+import { RouterView } from 'vue-router';
 export default {
   name: 'App',
   components: {
-    NavHeader
+    NavHeader,
+    RouterView
   }
     
 }

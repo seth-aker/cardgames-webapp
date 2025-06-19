@@ -3,8 +3,14 @@
 </template>
 
 <script>
+import { useGameStore } from '@/stores/gameStore.js';
+
 export default {
 props: ['isGameOver'],
+setup() {
+    const gameStore = useGameStore();
+    return { gameStore };
+},
 data() {
     return {
         seconds: 0,
@@ -14,7 +20,7 @@ created() {
     let interval = setInterval(() => {
         this.seconds++;
         if(this.isGameOver) {
-            this.$store.commit('LOG_TIME', `${this.timeLog.formattedMinutes}:${this.timeLog.seconds}`)
+            this.gameStore.logTime(`${this.timeLog.formattedMinutes}:${this.timeLog.seconds}`)
             clearInterval(interval);
         }
     }, 1000); 

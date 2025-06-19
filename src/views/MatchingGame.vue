@@ -2,8 +2,8 @@
   <div id="matching">
       <aside>
         <h2>Match all the cards to win!</h2>
-        <span><p>Moves: {{$store.state.matchingAttempts}}</p></span>
-        <span><p>Cards Matched : {{ $store.state.cardsMatched.length }}/24</p></span>
+        <span><p>Moves: {{gameStore.matchingAttempts}}</p></span>
+        <span><p>Cards Matched : {{ gameStore.cardsMatched.length }}/24</p></span>
         <span><game-timer :isGameOver="isGameOver" /></span>
       </aside>
       <main>
@@ -18,9 +18,15 @@ import PlayingCard from '@/components/PlayingCard.vue';
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
 import GameTimer from '@/components/GameTimer.vue';
 import DisplayWin from '@/components/DisplayWin.vue';
+import { useGameStore } from '@/stores/gameStore.js';
+
 export default {
   name: "matching-game",
   components: { PlayingCard, GameTimer, DisplayWin },
+  setup() {
+    const gameStore = useGameStore();
+    return { gameStore };
+  },
   data() {
     return {
       pageTitle: 'Matching',
@@ -36,7 +42,7 @@ export default {
     async getCards(deckId) {
       const response = await deckOfCardsAPI.drawCards(deckId)
       if(response.data.remaining >= 0) {
-        this.$store.commit("ADD_CARD", response.data.cards)
+        this.gameStore.addCard(response.data.cards)
         if(response.data.remaining > 0)
           this.getCards(deckId);
       }
@@ -44,8 +50,8 @@ export default {
   },
 
   created() {
-    this.$store.commit('UPDATE_PAGE_TITLE', this.pageTitle);
-    this.$store.commit('CLEAR_MATCHING');
+    this.gameStore.updatePageTitle(this.pageTitle);
+    this.gameStore.clearMatching();
    
     deckOfCardsAPI.createMatchingDeck().then((resp) => {
       this.deckInfo = resp.data;
@@ -54,10 +60,10 @@ export default {
   }, 
   computed: {
     cards() {
-      return this.$store.state.cards;
+      return this.gameStore.cards;
     },
     isGameOver() {
-      return this.$store.getters.isGameOver;
+      return this.gameStore.isGameOver;
     },
   }
 }

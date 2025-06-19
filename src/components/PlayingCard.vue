@@ -12,9 +12,14 @@
 </template>
 
 <script>
+import { useGameStore } from '@/stores/gameStore.js';
+
 export default {
     props: ['imageUrl', 'cardName'],
-    
+    setup() {
+        const gameStore = useGameStore();
+        return { gameStore };
+    },
     data() {
         return {
             cardbackURL:'https://www.deckofcardsapi.com/static/img/back.png',
@@ -23,14 +28,14 @@ export default {
     },
     methods: {
         flipCard() {
-            if(this.showCard === false && this.$store.state.cardsShowing.length < 2) {
-            this.$store.commit('ADD_CARD_SHOWING', this.cardName)
+            if(this.showCard === false && this.gameStore.cardsShowing.length < 2) {
+                this.gameStore.addCardShowing(this.cardName)
             }
 
-            if(this.$store.state.cardsShowing.length >= 2 ){
+            if(this.gameStore.cardsShowing.length >= 2 ){
                 setTimeout(() => {
-                    this.checkMatching(this.$store.state.cardsShowing);
-                    this.$store.commit('CLEAR_SHOWING');
+                    this.checkMatching(this.gameStore.cardsShowing);
+                    this.gameStore.clearShowing();
                 }, 750);
                 
             }
@@ -40,21 +45,21 @@ export default {
             try {
                 if(cardIds !== undefined) {
                     if(cardIds[0].substring(0,1) === cardIds[1].substring(0,1)) {
-                        this.$store.commit('ADD_MATCHING_CARDS', cardIds)
+                        this.gameStore.addMatchingCards(cardIds)
                     }
                 }
             } catch (error) {
-                this.$store.commit('CLEAR_SHOWING');
+                this.gameStore.clearShowing();
             }
         },
 
     },
     computed: {
         showCard() {
-             return this.$store.state.cardsShowing.includes(this.cardName) ? true : false      
+             return this.gameStore.cardsShowing.includes(this.cardName) ? true : false      
         },
         matched() {
-            return this.$store.state.cardsMatched.includes(this.cardName) ? true : false
+            return this.gameStore.cardsMatched.includes(this.cardName) ? true : false
         }
     }
 }
