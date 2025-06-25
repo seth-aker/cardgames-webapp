@@ -16,10 +16,6 @@ describe("MatchingGame component tests", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
         vi.clearAllMocks();
-    })
-    const mockDeckId = "1234"
-    it("fetches a new deck and draws cards when created", async () => {
-        
         deckOfCardsAPI.createMatchingDeck.mockResolvedValue({data: {deck_id: mockDeckId}});
         deckOfCardsAPI.drawCards.mockResolvedValue({
             data: {
@@ -34,6 +30,11 @@ describe("MatchingGame component tests", () => {
               plugins: [createPinia()], 
             },
           });
+    })
+    const mockDeckId = "1234"
+    it("fetches a new deck and draws cards when created", async () => {
+        
+       
           
           const gameStore = useGameStore();
           gameStore.cards = [{code: 'AC'}]
@@ -52,14 +53,6 @@ describe("MatchingGame component tests", () => {
     it('does NOT render the win screen when not all cards are matched', async () => {
         // ARRANGE
         // Mock APIs to prevent errors during component creation
-        deckOfCardsAPI.createMatchingDeck.mockResolvedValue({ data: { deck_id: '123' } });
-        deckOfCardsAPI.drawCards.mockResolvedValue({ data: { cards: [{code: "KD"}], remaining: 0 } });
-
-        render(MatchingGame, {
-        global: {
-            plugins: [createPinia()],
-        },
-        });
 
         // Get the store instance that the component is using
         const gameStore = useGameStore();
@@ -67,8 +60,7 @@ describe("MatchingGame component tests", () => {
         // To make isGameOver FALSE, set the underlying state so the lengths are NOT equal
         gameStore.cards = [{ code: 'AS' }, { code: 'QC' }]; // 3 cards total
         gameStore.cardsMatched = ['AS']; // Only 1 card matched
-        console.log(gameStore.cards)
-        console.log(gameStore.cardsMatched)
+
         // ASSERT
         // Check that the getter correctly returns false
         await waitFor(() => {
@@ -87,19 +79,12 @@ describe("MatchingGame component tests", () => {
   // Test Case 2: isGameOver should be TRUE (win screen is visible)
   it('renders the win screen when all cards are matched', async () => {
     // ARRANGE
-    deckOfCardsAPI.createMatchingDeck.mockResolvedValue({ data: { deck_id: '123' } });
-    deckOfCardsAPI.drawCards.mockResolvedValue({ data: { cards: [{ code: 'KD' }], remaining: 0 } });
-
-    render(MatchingGame, {
-      global: {
-        plugins: [createPinia()],
-      },
-    });
+    
 
     const gameStore = useGameStore();
 
 
-    gameStore.addCard([{code: "AS"}]);
+    gameStore.cards = [{code: "AS"},{code: "KD"}];
     gameStore.cardsMatched = ['AS', 'KD'];
 
     // ASSERT
@@ -112,14 +97,6 @@ describe("MatchingGame component tests", () => {
   })
 
   it('should render the correct number of moves attempted', async () => {
-        deckOfCardsAPI.createMatchingDeck.mockResolvedValue({ data: { deck_id: '123' } });
-        deckOfCardsAPI.drawCards.mockResolvedValue({ data: { cards: [{code: "KD"}], remaining: 0 } });
-
-        render(MatchingGame, {
-        global: {
-            plugins: [createPinia()],
-        },
-        });
 
         const gameStore = useGameStore();
         
@@ -137,14 +114,6 @@ describe("MatchingGame component tests", () => {
         })
   })
   it('should render the proper number of matched cards', async () => {
-    deckOfCardsAPI.createMatchingDeck.mockResolvedValue({ data: { deck_id: '123' } });
-        deckOfCardsAPI.drawCards.mockResolvedValue({ data: { cards: [{code: "KD"}], remaining: 0 } });
-
-        render(MatchingGame, {
-        global: {
-            plugins: [createPinia()],
-        },
-        });
 
         const gameStore = useGameStore();
         // ASSERT INITIAL STATE
