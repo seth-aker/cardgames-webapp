@@ -53,7 +53,7 @@ export const useGameStore = defineStore('game', {
     },
     
     addMatchingCards(cardIds) {
-      cardIds.forEach(cardId => {
+      cardIds?.forEach(cardId => {
         this.cardsMatched.push(cardId)
       })
     },
