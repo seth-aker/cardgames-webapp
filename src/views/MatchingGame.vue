@@ -7,9 +7,9 @@
         <span><game-timer :isGameOver="isGameOver" /></span>
       </aside>
       <main>
-        <playing-card v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
+        <playing-card data-testid="playing-card" v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
       </main>
-      <display-win v-show="isGameOver" /> 
+      <display-win v-if="isGameOver" /> 
   </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
         success: false,
         deck_id: '',
         shuffled: true,
-        remaining: '',
+        remaining: 0,
       },
     }
   },

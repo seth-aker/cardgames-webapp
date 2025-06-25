@@ -1,0 +1,10 @@
+*
+!eslint.config.js
+!index.html
+!package-lock.json
+!package.json
+!public
+!run_tests.sh
+!src
+!test
+!vite.config.js
