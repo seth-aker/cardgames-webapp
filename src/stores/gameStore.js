@@ -7,7 +7,8 @@ export const useGameStore = defineStore('game', {
     cardsShowing: [],
     cardsMatched: [],
     matchingAttempts: 0,
-    gameTime: '00:00'
+    gameTime: '00:00',
+    isPaused: false  // New pause state
   }),
   
   getters: {
@@ -57,5 +58,11 @@ export const useGameStore = defineStore('game', {
         this.cardsMatched.push(cardId)
       })
     },
+    togglePause() {
+      this.isPaused = !this.isPaused;
+    },
+    resumeGame() {
+      this.isPaused = false;
+    }
   }
 })

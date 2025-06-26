@@ -9,12 +9,18 @@
         <p>Cards Matched : {{ gameStore.cardsMatched.length }}/24</p>
       </span>
       <span><game-timer :isGameOver="gameStore.isGameOver" /></span>
+      <span>
+        <button @click="gameStore.togglePause()" class="pause-button">
+          {{ gameStore.isPaused ? 'Resume' : 'Pause' }}
+        </button>
+      </span>
     </aside>
     <main>
       <playing-card data-testid="playing-card" v-for="(card, index) in gameStore.cards" :key="card.code"
         :imageUrl="card.image" :cardName="card.code" :class="`card${index}`" />
     </main>
     <display-win v-if="gameStore.isGameOver" />
+    <pause-menu v-if="gameStore.isPaused && !gameStore.isGameOver" />
   </div>
 </template>
 
@@ -24,6 +30,7 @@ import PlayingCard from '@/components/PlayingCard.vue'
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
 import GameTimer from '@/components/GameTimer.vue'
 import DisplayWin from '@/components/DisplayWin.vue'
+import PauseMenu from '@/components/PauseMenu.vue' // Add this import
 import { useGameStore } from '@/stores/gameStore.js'
 
 const gameStore = useGameStore()
@@ -124,6 +131,19 @@ main {
   p {
     font-size: 10px;
   }
+  .pause-button {
+  background-color: rgb(84, 134, 84);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.pause-button:hover {
+  background-color: rgb(116, 177, 116);
+}
 }
 
 @media only screen and (max-width: 600px) {
