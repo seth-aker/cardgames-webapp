@@ -8,18 +8,18 @@
       <span>
         <p>Cards Matched : {{ gameStore.cardsMatched.length }}/24</p>
       </span>
-      <span><game-timer :isGameOver="isGameOver" /></span>
+      <span><game-timer :isGameOver="gameStore.isGameOver" /></span>
     </aside>
     <main>
-      <playing-card data-testid="playing-card" v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image"
-        :cardName="card.code" :class="`card${index}`" />
+      <playing-card data-testid="playing-card" v-for="(card, index) in gameStore.cards" :key="card.code"
+        :imageUrl="card.image" :cardName="card.code" :class="`card${index}`" />
     </main>
-    <display-win v-if="isGameOver" />
+    <display-win v-if="gameStore.isGameOver" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import PlayingCard from '@/components/PlayingCard.vue'
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
 import GameTimer from '@/components/GameTimer.vue'
@@ -44,14 +44,6 @@ const getCards = async (deckId) => {
       getCards(deckId)
   }
 }
-
-const cards = computed(() => {
-  return gameStore.cards
-})
-
-const isGameOver = computed(() => {
-  return gameStore.isGameOver
-})
 
 onMounted(() => {
   gameStore.updatePageTitle(pageTitle)
