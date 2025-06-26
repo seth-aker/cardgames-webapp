@@ -7,7 +7,7 @@ export const useGameStore = defineStore('game', {
     cardsShowing: [],
     cardsMatched: [],
     matchingAttempts: 0,
-    gameTime: ''
+    gameTime: '00:00'
   }),
   
   getters: {
@@ -26,7 +26,7 @@ export const useGameStore = defineStore('game', {
       this.cardsShowing = []
       this.cardsMatched = []
       this.matchingAttempts = 0
-      this.gameTime = ''
+      this.gameTime = '00:00'
     },
     
     updatePageTitle(pageTitle) {
@@ -57,9 +57,5 @@ export const useGameStore = defineStore('game', {
         this.cardsMatched.push(cardId)
       })
     },
-    
-    logTime(time) {
-      this.gameTime = time
-    }
   }
 })

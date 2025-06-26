@@ -33,9 +33,6 @@ describe("MatchingGame component tests", () => {
     })
     const mockDeckId = "1234"
     it("fetches a new deck and draws cards when created", async () => {
-        
-       
-          
           const gameStore = useGameStore();
           gameStore.cards = [{code: 'AC'}]
           // ASSERT

@@ -15,7 +15,7 @@ describe('Game store', () => {
         expect(store.cards).toEqual([]);
         expect(store.cardsMatched).toEqual([]);
         expect(store.matchingAttempts).toBe(0);
-        expect(store.gameTime).toEqual("");
+        expect(store.gameTime).toEqual("00:00");
     })
     describe('Getters', () => {
         it('isGameOver returns false when cards array is empty', () => {
