@@ -8,70 +8,52 @@
       <span>
         <p>Cards Matched : {{ gameStore.cardsMatched.length }}/24</p>
       </span>
-      <span><game-timer :isGameOver="isGameOver" /></span>
+      <span><game-timer :isGameOver="gameStore.isGameOver" /></span>
     </aside>
     <main>
-      <playing-card data-testid="playing-card" v-for="(card, index) in cards" :key="card.code" :imageUrl="card.image"
-        :cardName="card.code" :class="`card${index}`" />
+      <playing-card data-testid="playing-card" v-for="(card, index) in gameStore.cards" :key="card.code"
+        :imageUrl="card.image" :cardName="card.code" :class="`card${index}`" />
     </main>
-    <display-win v-if="isGameOver" />
+    <display-win v-if="gameStore.isGameOver" />
   </div>
 </template>
 
-<script>
-import { ref, reactive, computed, onMounted } from 'vue';  // Added imports for Composition API helpers
-import PlayingCard from '@/components/PlayingCard.vue';
-import deckOfCardsAPI from '@/services/deckOfCardsAPI.js';
-import GameTimer from '@/components/GameTimer.vue';
-import DisplayWin from '@/components/DisplayWin.vue';
-import { useGameStore } from '@/stores/gameStore.js';
+<script setup>
+import { ref, onMounted } from 'vue'
+import PlayingCard from '@/components/PlayingCard.vue'
+import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
+import GameTimer from '@/components/GameTimer.vue'
+import DisplayWin from '@/components/DisplayWin.vue'
+import { useGameStore } from '@/stores/gameStore.js'
 
-export default {
-  name: "matching-game",
-  components: { PlayingCard, GameTimer, DisplayWin },
-  setup() {
-    const gameStore = useGameStore();
+const gameStore = useGameStore()
 
-    // Reactive state (replaces data())
-    const pageTitle = ref('Matching');
-    const deckInfo = reactive({
-      success: false,
-      deck_id: '',
-      shuffled: true,
-      remaining: 0,
-    });
+const pageTitle = 'Matching'
+const deckInfo = ref({
+  success: false,
+  deck_id: '',
+  shuffled: true,
+  remaining: 0,
+})
 
-    // Functions (replaces methods)
-    const getCards = async (deckId) => {
-      const response = await deckOfCardsAPI.drawCards(deckId);
-      if (response.data.remaining >= 0) {
-        gameStore.addCard(response.data.cards);
-        if (response.data.remaining > 0) {
-          getCards(deckId);  // Recursive call preserved as-is
-        }
-      }
-    };
+const getCards = async (deckId) => {
+  const response = await deckOfCardsAPI.drawCards(deckId)
+  if (response.data.remaining >= 0) {
+    gameStore.addCard(response.data.cards)
+    if (response.data.remaining > 0)
+      getCards(deckId)
+  }
+}
 
-    // Computed properties (replaces computed)
-    const cards = computed(() => gameStore.cards);
-    const isGameOver = computed(() => gameStore.isGameOver);
+onMounted(() => {
+  gameStore.updatePageTitle(pageTitle)
+  gameStore.clearMatching()
 
-    // Lifecycle logic (replaces created())
-    onMounted(() => {
-      gameStore.updatePageTitle(pageTitle.value);
-      gameStore.clearMatching();
-      deckOfCardsAPI.createMatchingDeck().then((resp) => {
-        Object.assign(deckInfo, resp.data);  // Updates reactive object
-        getCards(resp.data.deck_id);
-      });
-    });
-
-    // Return values for template and component usage
-    return { gameStore, pageTitle, deckInfo, getCards, cards, isGameOver };
-  },
-};
-// Removed: data(), methods, created(), computed (all migrated to setup())
-// ... existing code ... (entire <style> section remains unchanged)
+  deckOfCardsAPI.createMatchingDeck().then((resp) => {
+    deckInfo.value = resp.data
+    getCards(resp.data.deck_id)
+  })
+})
 </script>
 
 <style scoped>

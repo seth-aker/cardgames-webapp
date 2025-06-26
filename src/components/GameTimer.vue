@@ -1,64 +1,50 @@
 <template>
-  <p>Timer: {{ minutes }}:{{ formattedSeconds }}</p>
+  <p>Timer: {{ gameStore.gameTime }}</p>
 </template>
 
-<script>
+<script setup>
 import { useGameStore } from '@/stores/gameStore.js';
+import { ref, onMounted, computed } from 'vue'
 
-export default {
-props: ['isGameOver'],
-setup() {
-    const gameStore = useGameStore();
-    return { gameStore };
-},
-data() {
-    return {
-        seconds: 0,
+const {isGameOver} = defineProps({
+    isGameOver: Boolean
+})
+const gameStore = useGameStore();
+
+const seconds = ref(0)
+
+const formattedMinutes = computed(() => {
+    let m = seconds.value/60;
+    if(m < 1){
+        return '00';
+    } 
+    if(m < 10){
+        return `0${Math.floor(m)}`;
     }
-},
-created() {
+    return Math.floor(m).toString();
+})
+const formattedSeconds = computed(() => {
+    let s = seconds.value % 60;
+    if(s === 0) {
+        return '00';
+    } 
+    if(s < 10) {
+        return `0${s}`;
+    } else {
+        return s.toString();
+    }
+})
+
+onMounted(() => {
     let interval = setInterval(() => {
-        this.seconds++;
-        if(this.isGameOver) {
-            this.gameStore.logTime(`${this.timeLog.formattedMinutes}:${this.timeLog.seconds}`)
-            clearInterval(interval);
+        seconds.value++;
+        gameStore.gameTime = `${formattedMinutes.value}:${formattedSeconds.value}`;
+        if(isGameOver) {
+            clearInterval(interval)
         }
-    }, 1000); 
-},
-computed: {
-    minutes() {
-        let m = this.seconds/60;
-        if(m < 1){
-            return '00';
-        } 
-        if(m < 10){
-            return `0${Math.floor(m)}`;
-        }
-        return Math.floor(m);
-       
-    },
-    formattedSeconds() {
-        let s = this.seconds % 60;
-        if(s === 0) {
-            return '00';
-        } 
-        if(s < 10) {
-            return `0${s}`;
-        } else {
-            return s;
-        }
-        
-    },
-    timeLog() {
-        const time = {
-            formattedMinutes: this.minutes,
-            seconds: this.formattedSeconds
-        };
-        return time;
-    }
+    }, 1000)
+})
 
-}
-}
 </script>
 
 <style>
