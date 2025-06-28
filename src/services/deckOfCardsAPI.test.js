@@ -126,7 +126,7 @@ describe("deckOfCardsAPI tests", () => {
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       const calls = mockHttpGet.mock.calls[0]
-      expect(calls[0]).toBeOneOf(['/new/shuffle', '/new/shuffle/?deck_count=1'])
+      expect(calls[0]).toBeOneOf(['/new/shuffle/', '/new/shuffle/?deck_count=1'])
       expect(response.data.deck_id).toBe('standarddeck789');
       expect(response.data.remaining).toBe(52);
     });
