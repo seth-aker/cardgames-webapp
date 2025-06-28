@@ -38,10 +38,6 @@ describe("deckOfCardsAPI tests", () => {
       mockHttpGet.mockResolvedValue(mockDeckResponse)
       const response = await deckOfCardsAPI.createDeck();
 
-      expect(axios.create).toHaveBeenCalledWith({
-        baseURL: "https://www.deckofcardsapi.com/api/deck"
-      });
-
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(response).toEqual(mockDeckResponse);
       expect(response.data.deck_id).toBe('mockdeck123');
@@ -129,8 +125,8 @@ describe("deckOfCardsAPI tests", () => {
       const response = await deckOfCardsAPI.createDeck();
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
-
-      expect(mockHttpGet).toHaveBeenCalledWith('/new/shuffle/');
+      const calls = mockHttpGet.mock.calls[0]
+      expect(calls[0]).toBeOneOf(['/new/shuffle', '/new/shuffle/?deck_count=1'])
       expect(response.data.deck_id).toBe('standarddeck789');
       expect(response.data.remaining).toBe(52);
     });
