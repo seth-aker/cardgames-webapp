@@ -231,7 +231,7 @@ describe("deckOfCardsAPI tests", () => {
     });
   });
 
-  describe('shuffleDeck function', () => {
+  describe('shuffle function', () => {
     const existingDeckId = 'existingDeckId123';
 
     it('should shuffle an existing deck', async () => {
@@ -245,7 +245,7 @@ describe("deckOfCardsAPI tests", () => {
       };
       mockHttpGet.mockResolvedValue(mockShuffleResponse);
 
-      const response = await deckOfCardsAPI.shuffleDeck(existingDeckId);
+      const response = await deckOfCardsAPI.shuffle(existingDeckId);
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/${existingDeckId}/shuffle/`);
@@ -263,7 +263,7 @@ describe("deckOfCardsAPI tests", () => {
       };
       mockHttpGet.mockResolvedValue(mockShuffleResponse);
 
-      const response = await deckOfCardsAPI.shuffleDeck(existingDeckId, true);
+      const response = await deckOfCardsAPI.shuffle(existingDeckId, true);
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/${existingDeckId}/shuffle/?remaining=true`);
@@ -275,7 +275,7 @@ describe("deckOfCardsAPI tests", () => {
       const mockError = new Error('Failed to shuffle deck');
       mockHttpGet.mockRejectedValue(mockError);
 
-      expect(await deckOfCardsAPI.shuffleDeck(existingDeckId)).rejects.toThrow('Failed to shuffle deck');
+      expect(await deckOfCardsAPI.shuffle(existingDeckId)).rejects.toThrow('Failed to shuffle deck');
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
     });
 
@@ -315,7 +315,7 @@ describe("deckOfCardsAPI tests", () => {
     it('should handle errors when returning', async () => {
       const mockError = new Error('Failed to return cards');
       mockHttpGet.mockRejectedValue(mockError);
-      await expect(deckOfCardsAPI.shuffleDeck(existingDeckId)).rejects.toThrow('Failed to return cards');
+      await expect(deckOfCardsAPI.shuffle(existingDeckId)).rejects.toThrow('Failed to return cards');
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
     })
   })
