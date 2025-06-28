@@ -280,14 +280,16 @@ describe("deckOfCardsAPI tests", () => {
     const existingDeckId = 'existingDeckId123';
     it('should call the correct endpoint and return with correct deck data', async () => {
       const mockDeckResponse = {
-        "success": true,
-        "deck_id": existingDeckId,
-        "shuffled": true,
-        "remaining": 52
+        data: {
+          "success": true,
+          "deck_id": existingDeckId,
+          "shuffled": true,
+          "remaining": 52
+        }
       }
       mockHttpGet.mockResolvedValue(mockDeckResponse);
 
-      const response = await deckOfCardsAPI.returnCard();
+      const response = await deckOfCardsAPI.returnCard(existingDeckId);
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/${existingDeckId}/return`)
@@ -296,10 +298,12 @@ describe("deckOfCardsAPI tests", () => {
     it('should return specific cards if specified', async () => {
       const cardsToReturn = ['AS', 'KH', 'JD']
       const mockDeckResponse = {
-        "success": true,
-        "deck_id": existingDeckId,
-        "shuffled": true,
-        "remaining": 15 // arbitrary number
+        data: {
+          "success": true,
+          "deck_id": existingDeckId,
+          "shuffled": true,
+          "remaining": 15 // arbitrary number
+        }
       }
       mockHttpGet.mockResolvedValue(mockDeckResponse)
 
