@@ -5,10 +5,25 @@ const http = axios.create({
 });
 
 export default {
-    createMatchingDeck() {
-        return http.get('/new/shuffle/?cards=AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD');
+    createDeck(cards = null) {
+        let url = '/new/shuffle/';
+        if (cards) {
+            url += `?cards=${cards}`;
+        } else {
+            url += '?deck_count=1';
+        }
+        return http.get(url);
     },
-    drawCards(deckId) {
-        return http.get(`/${deckId}/draw/?count=1`);
+    shuffle(deckId) {
+        return http.get(`/${deckId}/shuffle/`);
+    },
+    drawCard(deckId, count = 1) {
+        return http.get(`/${deckId}/draw/?count=${count}`);
+    },
+    returnCard(deckId, cards) {
+        if (!cards) {
+            throw new Error('Cards parameter is required for returning cards.');
+        }
+        return http.get(`/${deckId}/return/?cards=${cards}`);
     }
 }
