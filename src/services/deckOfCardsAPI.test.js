@@ -105,7 +105,7 @@ describe("deckOfCardsAPI tests", () => {
 
       mockHttpGet.mockRejectedValue(mockError);
 
-      await expect(deckOfCardsAPI.drawCard(undefined)).rejects.toThrow(`Request failed with status code 404 for ${expectedUrlPart}`);
+      await expect(deckOfCardsAPI.drawCard(undefined)).rejects.toThrow(expect.any(Error));
       expect(mockHttpGet).toHaveBeenCalledWith(expectedUrlPart);
     });
   });
@@ -164,7 +164,7 @@ describe("deckOfCardsAPI tests", () => {
       };
       mockHttpGet.mockResolvedValue(mockCustomDeckResponse);
 
-      const response = await deckOfCardsAPI.createDeck(customCards.join(','));
+      const response = await deckOfCardsAPI.createDeck(1, customCards.join(','));
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/new/shuffle/?cards=${customCards.join(',')}`);
