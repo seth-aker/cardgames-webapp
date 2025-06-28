@@ -6,8 +6,8 @@ import { createPinia, setActivePinia } from 'pinia';
 import { useGameStore } from '../stores/gameStore';
 vi.mock('@/services/deckOfCardsAPI.js', () => ({
   default: {
-    createMatchingDeck: vi.fn(),
-    drawCards: vi.fn()
+    createDeck: vi.fn(),
+    drawCard: vi.fn()
   }
 }))
 import deckOfCardsAPI from '../services/deckOfCardsAPI';
@@ -16,8 +16,8 @@ describe("MatchingGame component tests", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();
-    deckOfCardsAPI.createMatchingDeck.mockResolvedValue({ data: { deck_id: mockDeckId } });
-    deckOfCardsAPI.drawCards.mockResolvedValue({
+    deckOfCardsAPI.createDeck.mockResolvedValue({ data: { deck_id: mockDeckId } });
+    deckOfCardsAPI.drawCard.mockResolvedValue({
       data: {
         data: {
           cards: [{ code: 'AS', image: 'url1' }],
@@ -36,11 +36,11 @@ describe("MatchingGame component tests", () => {
     const gameStore = useGameStore();
     gameStore.cards = [{ code: 'AC' }]
     // ASSERT
-    expect(deckOfCardsAPI.createMatchingDeck).toHaveBeenCalledTimes(1);
+    expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
 
 
     await waitFor(() => {
-      expect(deckOfCardsAPI.drawCards).toHaveBeenCalledWith(mockDeckId);
+      expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
     });
 
     const cards = await screen.findAllByTestId('playing-card'); // Example query
