@@ -10,5 +10,5 @@ export default {
     },
     drawCards(deckId) {
         return http.get(`/${deckId}/draw/?count=1`);
-    } 
+    }
 }
