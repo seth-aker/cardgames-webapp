@@ -280,7 +280,7 @@ describe("deckOfCardsAPI tests", () => {
     });
 
   })
-  describe('returnCards function', () => {
+  describe('returnCard function', () => {
     const existingDeckId = 'existingDeckId123';
     it('should call the correct endpoint and return with correct deck data', async () => {
       const mockDeckResponse = {
@@ -291,7 +291,7 @@ describe("deckOfCardsAPI tests", () => {
       }
       mockHttpGet.mockResolvedValue(mockDeckResponse);
 
-      const response = await deckOfCardsAPI.returnCards();
+      const response = await deckOfCardsAPI.returnCard();
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/${existingDeckId}/return`)
@@ -307,7 +307,7 @@ describe("deckOfCardsAPI tests", () => {
       }
       mockHttpGet.mockResolvedValue(mockDeckResponse)
 
-      const response = await deckOfCardsAPI.returnCards(existingDeckId, cardsToReturn.join(','));
+      const response = await deckOfCardsAPI.returnCard(existingDeckId, cardsToReturn.join(','));
       expect(mockHttpGet).toHaveBeenCalledTimes(1)
       expect(mockHttpGet).toHaveBeenCalledWith(`/${existingDeckId}/return/?cards=${cardsToReturn.join(',')}`)
       expect(response.data.remaining).toBe(15)
