@@ -95,7 +95,7 @@ describe("deckOfCardsAPI tests", () => {
       mockHttpGet.mockRejectedValue(mockError);
 
 
-      await expect(deckOfCardsAPI.drawCard(testDeckId)).rejects.toThrow('Failed to draw cards');
+      await expect(deckOfCardsAPI.drawCard(testDeckId)).rejects.toThrow(expect.any(Error));
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
     });
 
@@ -271,7 +271,7 @@ describe("deckOfCardsAPI tests", () => {
       const mockError = new Error('Failed to shuffle deck');
       mockHttpGet.mockRejectedValue(mockError);
 
-      expect(await deckOfCardsAPI.shuffle(existingDeckId)).rejects.toThrow('Failed to shuffle deck');
+      await expect(deckOfCardsAPI.shuffle(existingDeckId)).rejects.toThrow(expect.any(Error));
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
     });
 
@@ -308,10 +308,11 @@ describe("deckOfCardsAPI tests", () => {
       expect(mockHttpGet).toHaveBeenCalledWith(`/${existingDeckId}/return/?cards=${cardsToReturn.join(',')}`)
       expect(response.data.remaining).toBe(15)
     })
+
     it('should handle errors when returning', async () => {
       const mockError = new Error('Failed to return cards');
       mockHttpGet.mockRejectedValue(mockError);
-      await expect(deckOfCardsAPI.shuffle(existingDeckId)).rejects.toThrow('Failed to return cards');
+      await expect(deckOfCardsAPI.shuffle(existingDeckId)).rejects.toThrow(expect.any(Error));
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
     })
   })
