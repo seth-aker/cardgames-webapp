@@ -13,13 +13,13 @@ vi.mock('vue-router', async () => {
                 go: vi.fn()
             }
         })
-        
+
     }
 })
 vi.mock('@/services/deckOfCardsAPI.js', () => ({
     default: {
-        createMatchingDeck: vi.fn(),
-        drawCards: vi.fn()
+        createDeck: vi.fn(),
+        drawCard: vi.fn()
     }
 }))
 
@@ -30,33 +30,33 @@ describe("PauseButton component tests", () => {
     // Setup and mocks
     const mockDeckId = '1234'
     beforeEach(() => {
-            setActivePinia(createPinia());
-            vi.clearAllMocks();
-            deckOfCardsAPI.createMatchingDeck.mockResolvedValue({data: {deck_id: mockDeckId}});
-            deckOfCardsAPI.drawCards.mockResolvedValue({
+        setActivePinia(createPinia());
+        vi.clearAllMocks();
+        deckOfCardsAPI.createDeck.mockResolvedValue({ data: { deck_id: mockDeckId } });
+        deckOfCardsAPI.drawCard.mockResolvedValue({
+            data: {
                 data: {
-                    data: {
-                        cards: [{ code: 'AS', image: 'url1' }],
-                        remaining: 0, // Set remaining to 0 to stop the recursion
-                      },
-                }
-            });
-            render(MatchingGame, {
-                global: {
-                    plugins: [createPinia()]
-                }
-            })
-            
-            vi.useFakeTimers()
+                    cards: [{ code: 'AS', image: 'url1' }],
+                    remaining: 0, // Set remaining to 0 to stop the recursion
+                },
+            }
+        });
+        render(MatchingGame, {
+            global: {
+                plugins: [createPinia()]
+            }
         })
-    
+
+        vi.useFakeTimers()
+    })
+
     it("pause button gets rendered inside of the MatchingGame component", async () => {
         const button = await screen.findByText(/^pause$/i);
         expect(button).toBeInTheDocument();
     })
 
     it('pause button stops game timer when pressed', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
         const gameStore = useGameStore();
         vi.advanceTimersByTime(1000);
         expect(gameStore.gameTime).toBe("00:01");
@@ -67,36 +67,36 @@ describe("PauseButton component tests", () => {
     })
 
     it('pause menu is rendered when pause button is pressed', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
-   
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
         await user.click(await screen.findByText(/^pause$/i));
         const pausedMenu = await screen.findByText(/paused/i)
         expect(pausedMenu).toBeInTheDocument();
     });
 
     it('pause menu component has a "Resume" button', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
-        
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
         await user.click(await screen.findByText(/^pause$/i));
 
         const resumeButton = await screen.findByText(/^resume$/i);
         expect(resumeButton).toBeInTheDocument();
-    } )
+    })
     it('resumeButton closes the pause menu', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
-        
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^resume$/i))
         const pauseMenu = screen.queryByText(/^paused$/i);
         expect(pauseMenu).not.toBeInTheDocument()
     })
     it('resumeButton resumes the game timer', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
-        
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
 
         const gameStore = useGameStore();
         expect(gameStore.gameTime).toBe("00:00");
-        
+
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^resume$/i));
         vi.advanceTimersByTime(2000);
@@ -106,25 +106,25 @@ describe("PauseButton component tests", () => {
     })
 
     it('pause menu component has a new game button', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
-        
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
         await user.click(await screen.findByText(/^pause$/i));
         const resumeButton = await screen.findByText(/^new game$/i);
         expect(resumeButton).toBeInTheDocument();
     })
     it('new game button clears the gameStore and resets the game.', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
         const gameStore = useGameStore();
         const spy = vi.spyOn(gameStore, 'clearMatching')
-        
-        gameStore.cards = [{code: 'AC'}, {code: 'AH'}, {code: 'KC'}, {code: 'KD'}];
+
+        gameStore.cards = [{ code: 'AC' }, { code: 'AH' }, { code: 'KC' }, { code: 'KD' }];
         gameStore.gameTime = '01:30';
         gameStore.matchingAttempts = 20;
-        gameStore.cardsShowing = [{code: 'AC'}],
-        gameStore.cardsMatched = [{code:'2H'}, {code: '2D'}]
+        gameStore.cardsShowing = [{ code: 'AC' }],
+            gameStore.cardsMatched = [{ code: '2H' }, { code: '2D' }]
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^new game$/i));
-        
+
         expect(spy).toHaveBeenCalledTimes(1)
         expect(gameStore.cards).toEqual([])
         expect(gameStore.cardsShowing).toEqual([]);
@@ -132,14 +132,14 @@ describe("PauseButton component tests", () => {
         expect(gameStore.matchingAttempts).toBe(0);
         expect(gameStore.gameTime).toBe("00:00");
 
-        expect(deckOfCardsAPI.createMatchingDeck).toHaveBeenCalledTimes(1);
+        expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
         await waitFor(() => {
-            expect(deckOfCardsAPI.drawCards).toHaveBeenCalledWith(mockDeckId);
+            expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
         });
     })
     it('new game button closes the pause menu', async () => {
-        const user = userEvent.setup({advanceTimers: vi.advanceTimersByTime});
-        
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^new game$/i))
         const pauseMenu = screen.queryByText(/^paused$/i);
