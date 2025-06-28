@@ -168,7 +168,7 @@ describe("deckOfCardsAPI tests", () => {
       };
       mockHttpGet.mockResolvedValue(mockCustomDeckResponse);
 
-      const response = await deckOfCardsAPI.createDeck(customCards);
+      const response = await deckOfCardsAPI.createDeck(customCards.join(','));
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/new/shuffle/?cards=${customCards.join(',')}`);
@@ -308,7 +308,7 @@ describe("deckOfCardsAPI tests", () => {
       }
       mockHttpGet.mockResolvedValue(mockDeckResponse)
 
-      const response = await deckOfCardsAPI.returnCards(existingDeckId, cardsToReturn);
+      const response = await deckOfCardsAPI.returnCards(existingDeckId, cardsToReturn.join(','));
       expect(mockHttpGet).toHaveBeenCalledTimes(1)
       expect(mockHttpGet).toHaveBeenCalledWith(`/${existingDeckId}/return/?cards=${cardsToReturn.join(',')}`)
       expect(response.data.remaining).toBe(15)
