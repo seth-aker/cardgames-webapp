@@ -57,7 +57,7 @@ describe("deckOfCardsAPI tests", () => {
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
     });
   })
-  describe('drawCards function', () => {
+  describe('drawCard function', () => {
     const testDeckId = 'testdeck456';
 
     it('should call the correct endpoint with deckId and return card data', async () => {
@@ -83,7 +83,7 @@ describe("deckOfCardsAPI tests", () => {
 
       mockHttpGet.mockResolvedValue(mockDrawResponse);
 
-      const response = await deckOfCardsAPI.drawCards(testDeckId);
+      const response = await deckOfCardsAPI.drawCard(testDeckId);
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
 
@@ -94,22 +94,22 @@ describe("deckOfCardsAPI tests", () => {
       expect(response.data.cards[0].code).toBe('AC');
     });
 
-    it('should handle API errors for drawCards', async () => {
+    it('should handle API errors for drawCard', async () => {
       const mockError = new Error('Failed to draw cards');
       mockHttpGet.mockRejectedValue(mockError);
 
 
-      await expect(deckOfCardsAPI.drawCards(testDeckId)).rejects.toThrow('Failed to draw cards');
+      await expect(deckOfCardsAPI.drawCard(testDeckId)).rejects.toThrow('Failed to draw cards');
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw an error if deckId is not provided to drawCards', async () => {
+    it('should throw an error if deckId is not provided to drawCard', async () => {
       const expectedUrlPart = '/undefined/draw/?count=1';
       const mockError = new Error(`Request failed with status code 404 for ${expectedUrlPart}`);
 
       mockHttpGet.mockRejectedValue(mockError);
 
-      await expect(deckOfCardsAPI.drawCards(undefined)).rejects.toThrow(`Request failed with status code 404 for ${expectedUrlPart}`);
+      await expect(deckOfCardsAPI.drawCard(undefined)).rejects.toThrow(`Request failed with status code 404 for ${expectedUrlPart}`);
       expect(mockHttpGet).toHaveBeenCalledWith(expectedUrlPart);
     });
   });
@@ -185,7 +185,7 @@ describe("deckOfCardsAPI tests", () => {
     });
   });
 
-  describe('drawCards with custom count', () => {
+  describe('drawCard with custom count', () => {
     const testDeckId = 'deckXYZ';
 
     it('should draw a specified number of cards', async () => {
@@ -202,8 +202,7 @@ describe("deckOfCardsAPI tests", () => {
       };
       mockHttpGet.mockResolvedValue(mockDrawMultipleResponse);
 
-      // Assuming drawCards now accepts a count parameter
-      const response = await deckOfCardsAPI.drawCards(testDeckId, countToDraw);
+      const response = await deckOfCardsAPI.drawCard(testDeckId, countToDraw);
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/${testDeckId}/draw/?count=${countToDraw}`);
@@ -223,7 +222,7 @@ describe("deckOfCardsAPI tests", () => {
       mockHttpGet.mockResolvedValue(mockDrawSingleResponse);
 
       // Test the existing behavior where count defaults to 1
-      const response = await deckOfCardsAPI.drawCards(testDeckId);
+      const response = await deckOfCardsAPI.drawCard(testDeckId);
 
       expect(mockHttpGet).toHaveBeenCalledTimes(1);
       expect(mockHttpGet).toHaveBeenCalledWith(`/${testDeckId}/draw/?count=1`); // Still expects count=1
