@@ -44,7 +44,7 @@ const deckInfo = ref({
 })
 
 const getCards = async (deckId) => {
-  const response = await deckOfCardsAPI.drawCards(deckId)
+  const response = await deckOfCardsAPI.drawCard(deckId)
   if (response.data.remaining >= 0) {
     gameStore.addCard(response.data.cards)
     if (response.data.remaining > 0)
@@ -56,7 +56,7 @@ onMounted(() => {
   gameStore.updatePageTitle(pageTitle)
   gameStore.clearMatching()
 
-  deckOfCardsAPI.createMatchingDeck().then((resp) => {
+  deckOfCardsAPI.createDeck(undefined, 'AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD').then((resp) => {
     deckInfo.value = resp.data
     getCards(resp.data.deck_id)
   })
@@ -131,19 +131,20 @@ main {
   p {
     font-size: 10px;
   }
-  .pause-button {
-  background-color: rgb(84, 134, 84);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  margin: 10px 0;
-}
 
-.pause-button:hover {
-  background-color: rgb(116, 177, 116);
-}
+  .pause-button {
+    background-color: rgb(84, 134, 84);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin: 10px 0;
+  }
+
+  .pause-button:hover {
+    background-color: rgb(116, 177, 116);
+  }
 }
 
 @media only screen and (max-width: 600px) {

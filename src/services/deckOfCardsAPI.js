@@ -5,10 +5,32 @@ const http = axios.create({
 });
 
 export default {
-    createMatchingDeck() {
-        return http.get('/new/shuffle/?cards=AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD');
+    createDeck(deckCount = 1, cards = null) {
+        let url = '/new/shuffle/'
+        if (cards) {
+            url = url + `?cards=${cards}`
+        } else {
+            url = url + `?deck_count=${deckCount}`
+        }
+        return http.get(url);
     },
-    drawCards(deckId) {
-        return http.get(`/${deckId}/draw/?count=1`);
+    drawCard(deckId, count = 1) {
+        return http.get(`/${deckId}/draw/?count=${count}`);
+    },
+    shuffle(deckId, remaining = false) {
+        if (!deckId) throw new Error("Deck id required");
+        let url = `/${deckId}/shuffle/`
+        if (remaining) {
+            url = url + '?remaining=true'
+        }
+        return http.get(url);
+    },
+    returnCard(deckId, cards = null) {
+        if (!deckId) throw new Error("Deck id required");
+        let url = `/${deckId}/return`
+        if (cards) {
+            url = url + `/?cards=${cards}`
+        }
+        return http.get(url)
     }
 }
