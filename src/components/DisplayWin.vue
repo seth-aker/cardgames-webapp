@@ -2,8 +2,8 @@
   <main class="overlay" >
       <div class="overlay-content">
           <h2>	&#9733; &#9733; &#9733; You Win! &#9733; &#9733; &#9733;</h2>
-          <p>Moves taken: {{ matchStore.matchingAttempts }}</p>
-          <p>Time Taken: {{ store.gameTime }}</p>
+          <p>Moves taken: {{ gameStore.matchingAttempts }}</p>
+          <p>Time Taken: {{ gameStore.gameTime }}</p>
           <p><a @click="startNewGame" >New Matching Game</a></p>
           <p><router-link :to="{name: 'main-menu'}">Home</router-link></p>
       </div>
@@ -11,20 +11,16 @@
 </template>
 
 <script>
-import { useGameInfoStore } from '@/pinia/gameInfo';
-import { useMatchingStore } from '@/pinia/matching';
+import { useGameStore } from '@/stores/gameStore.js';
 
 export default {
-    name: 'DisplayWin',
     setup() {
-        const store = useGameInfoStore();
-        const matchStore = useMatchingStore();
-        return { store, matchStore }
+        const gameStore = useGameStore();
+        return { gameStore };
     },
     methods: {
         startNewGame() {
-            this.matchStore.$reset();
-            this.store.gameTime = '';
+            this.gameStore.clearMatching();
             this.$router.go(this.$router.currentRoute)
         }
     }

@@ -1,171 +1,169 @@
 <template>
   <div id="matching">
-      <aside>
-        <h2>Match all the cards to win!</h2>
-        <span><p>Moves: {{ matchStore.matchingAttempts }}</p></span>
-        <span><p>Cards Matched : {{ matchStore.cardsMatched.length }}/24</p></span>
-        <span><game-timer :isGameOver="matchStore.isGameOver" /></span>
-      </aside>
-      <main>
-        <div class="loading" >
-          <img v-show="matchStore.cards.length === 0" :src="require('../assets/Spinner-1s-200px.gif')" alt="Loading...">
-        </div>
-        <matching-card v-for="(card, index) in matchStore.cards" :key="card.code" :imageUrl="card.image" :cardName="card.code" :class="`card${index}`"/>
-      </main>
-      <display-win v-show="matchStore.isGameOver" /> 
+    <aside>
+      <h2>Match all the cards to win!</h2>
+      <span>
+        <p>Moves: {{ gameStore.matchingAttempts }}</p>
+      </span>
+      <span>
+        <p>Cards Matched : {{ gameStore.cardsMatched.length }}/24</p>
+      </span>
+      <span><game-timer :isGameOver="gameStore.isGameOver" /></span>
+      <span>
+        <button @click="gameStore.togglePause()" class="pause-button">
+          {{ gameStore.isPaused ? 'Resume' : 'Pause' }}
+        </button>
+      </span>
+    </aside>
+    <main>
+      <playing-card data-testid="playing-card" v-for="(card, index) in gameStore.cards" :key="card.code"
+        :imageUrl="card.image" :cardName="card.code" :class="`card${index}`" />
+    </main>
+    <display-win v-if="gameStore.isGameOver" />
+    <pause-menu v-if="gameStore.isPaused && !gameStore.isGameOver" />
   </div>
 </template>
 
-<script>
-import MatchingCard from '@/components/Matching/MatchingCard.vue';
+<script setup>
+import { ref, onMounted } from 'vue'
+import PlayingCard from '@/components/PlayingCard.vue'
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
-import GameTimer from '@/components/GameTimer.vue';
-import DisplayWin from '@/components/DisplayWin.vue';
-import { useMatchingStore } from '@/pinia/matching';
-import { useGameInfoStore } from '@/pinia/gameInfo';
-import { ref } from 'vue';
+import GameTimer from '@/components/GameTimer.vue'
+import DisplayWin from '@/components/DisplayWin.vue'
+import PauseMenu from '@/components/PauseMenu.vue' // Add this import
+import { useGameStore } from '@/stores/gameStore.js'
 
+const gameStore = useGameStore()
 
-export default {
-  name: "matching-game",
-  setup() {
-    const matchStore = useMatchingStore();
-    matchStore.$reset();
-    const store = useGameInfoStore();
-    store.pageTitle = "Let's Play Memory Matching!"
-    const error = ref(null);
+const pageTitle = 'Matching'
+const deckInfo = ref({
+  success: false,
+  deck_id: '',
+  shuffled: true,
+  remaining: 0,
+})
 
-    //begins the async calls to get the cards. Uses function below 'getCards'
-    const getDeck = async () => {
-      try {
-        const response = await deckOfCardsAPI.createMatchingDeck();
-        if(!response.status === 200) {
-          throw Error("Failed to connect to deckofcardsapi.com")
-        }
-        getCards(response.data.deck_id)
-      } catch (err) {
-        error.value = err.message
-      }
-      
-    }
-
-    //runs until all the cards from the deck have been drawn.
-    const getCards = async (deckId) => {
-      try {
-        const response = await deckOfCardsAPI.drawCards(deckId, 24)
-        if(!response.status === 200) {
-          throw Error("Try again")
-        }
-        if(response.data.remaining >= 0) {
-          matchStore.addCards(response.data.cards)
-          if(response.data.remaining > 0)
-            getCards(deckId);
-        }
-      } catch(err) {
-        getCards(deckId)
-      }
-    }
-
-    
-    getDeck();
-    return { matchStore, error}
-  },
-  
-  components: { MatchingCard, GameTimer, DisplayWin },
+const getCards = async (deckId) => {
+  const response = await deckOfCardsAPI.drawCard(deckId)
+  if (response.data.remaining >= 0) {
+    gameStore.addCard(response.data.cards)
+    if (response.data.remaining > 0)
+      getCards(deckId)
+  }
 }
+
+onMounted(() => {
+  gameStore.updatePageTitle(pageTitle)
+  gameStore.clearMatching()
+
+  deckOfCardsAPI.createDeck(undefined, 'AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD').then((resp) => {
+    deckInfo.value = resp.data
+    getCards(resp.data.deck_id)
+  })
+})
 </script>
 
 <style scoped>
-  .loading {
-    position: absolute;
+#matching {
+  height: calc(100vh - 4rem);
+  display: flex;
+}
+
+aside {
+  width: 10vw;
+  background-color: rgb(116, 177, 116);
+  border-radius: 0px 10px 10px 0px;
+  padding: 10px;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-areas: "card0 card1 card2 card3 card4 card5 card6 card7"
+    "card8 card9 card10 card11 card12 card13 card14 card15"
+    "card16 card17 card18 card19 card20 card21 card22 card23";
+  width: 90vw;
+  justify-items: center;
+  height: -webkit-fill-available;
+  overflow: hidden;
+}
+
+.displayNone {
+  display: none;
+}
+
+@media only screen and (max-width: 1100px) {
+  #matching {
+    flex-direction: column-reverse;
+    justify-content: space-between;
+
+  }
+
+  main {
+    width: 100vw;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-areas: "card0 card1 card2 card3 card4 card5"
+      "card6 card7 card8 card9 card10 card11"
+      "card12 card13 card14 card15 card16 card17"
+      "card18 card19 card20 card21 card22 card23"
+  }
+
+  aside {
+    height: 12vh;
+    display: flex;
+    align-content: flex-start;
+    width: 100vw;
+  }
+
+  aside span,
+  aside h2 {
+    padding: 10px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    height: 90%;
   }
 
-  #matching{
-    height: calc(100vh - 4rem);
-    display: flex;
+  h2 {
+    font-size: 12px;
   }
 
-  aside{
-    width: 10vw;
-    background-color:  rgb(116, 177, 116);
-    border-radius: 0px 10px 10px 0px;
-    padding: 10px;
+  p {
+    font-size: 10px;
   }
 
-  main{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr ;
-    grid-template-areas: "card0 card1 card2 card3 card4 card5 card6 card7"
-                         "card8 card9 card10 card11 card12 card13 card14 card15"
-                         "card16 card17 card18 card19 card20 card21 card22 card23";
-    width: 90vw;
-    justify-items: center;
-    height: -webkit-fill-available;
-    overflow: hidden;
+  .pause-button {
+    background-color: rgb(84, 134, 84);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin: 10px 0;
   }
 
-  .displayNone {
-    display: none; 
+  .pause-button:hover {
+    background-color: rgb(116, 177, 116);
   }
-  
-  @media only screen and (max-width: 1100px) {
-    #matching {
-      flex-direction: column-reverse;
-      justify-content: space-between;
-     
-    }
-    main{
-      width: 100vw;
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr 1fr;
-      grid-template-areas:  "card0 card1 card2 card3 card4 card5"
-                            "card6 card7 card8 card9 card10 card11"
-                            "card12 card13 card14 card15 card16 card17"
-                            "card18 card19 card20 card21 card22 card23"
-    }
-    aside {
-      height: 12vh;
-      display: flex;
-      align-content: flex-start;
-      width: 100vw;
-    }
+}
 
-    aside span, aside h2 {
-      padding: 10px;
-      display: flex;
-      align-items: center;
-    }
-    h2{
-      font-size: 12px;
-    }
-    p{
-      font-size: 10px;
-    }
+@media only screen and (max-width: 600px) {
+
+  main {
+    width: 100vw;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas: "card0 card1 card2 card3"
+      "card4 card5 card6 card7"
+      "card8 card9 card10 card11"
+      "card12 card13 card14 card15"
+      "card16 card17 card18 card19"
+      "card20 card21 card22 card23"
   }
 
-  @media only screen and (max-width: 600px){
-    
-    main{
-      width: 100vw;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-      grid-template-areas:    "card0 card1 card2 card3"
-                              "card4 card5 card6 card7"
-                              "card8 card9 card10 card11"
-                              "card12 card13 card14 card15"
-                              "card16 card17 card18 card19"
-                              "card20 card21 card22 card23"
-    }
-
-    aside {
-      height: 9vh;
-    }
-
+  aside {
+    height: 9vh;
   }
 
+}
 </style>

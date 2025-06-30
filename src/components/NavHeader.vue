@@ -2,7 +2,7 @@
    <header>
         <div id="left-header">
             <img src="https://www.deckofcardsapi.com/static/img/spade.svg" alt="spade-img">
-            <h1> {{ store.pageTitle }} </h1>
+            <h1> {{ gameStore.pageTitle }} </h1>
         </div>
         
         <nav id="links" :class="{display: display}">
@@ -48,16 +48,12 @@
 </template>
 
 <script>
-import { useUserStore } from '../pinia/user';
-import { useGameInfoStore } from '@/pinia/gameInfo';
-import { useMatchingStore } from '@/pinia/matching';
+import { useGameStore } from '@/stores/gameStore.js';
+
 export default {
     setup() {
-        const userStore = useUserStore();
-        const store = useGameInfoStore();
-        const matchStore = useMatchingStore();
-
-        return { userStore, store, matchStore }
+        const gameStore = useGameStore();
+        return { gameStore };
     },
     data() {
         return {
@@ -71,7 +67,7 @@ export default {
         startNewGame() {
             // console.log(this.$route)
             if(this.$route.path === "/matching") {
-                this.matchStore.$reset();
+                this.gameStore.clearMatching();
                 this.$router.go(this.$router.currentRoute)
             }
         },

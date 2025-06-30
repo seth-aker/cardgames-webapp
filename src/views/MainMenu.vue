@@ -24,12 +24,14 @@
 </template>
 
 <script>
-import { useGameInfoStore } from '@/pinia/gameInfo';
+import {RouterLink} from 'vue-router'
+import { useGameStore } from '../stores/gameStore'
 export default {
     name: 'main-menu',
+    components: { RouterLink }, 
     setup() {
-        const infoStore = useGameInfoStore();
-        return { infoStore }
+        const gameStore = useGameStore()
+        return { gameStore }
     },
     data() {
         return {
@@ -43,7 +45,7 @@ export default {
         }
     },
     created() {
-        this.infoStore.$reset();
+        this.gameStore.updatePageTitle(this.pageTitle)
     }
     
 }

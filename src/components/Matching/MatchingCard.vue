@@ -12,13 +12,13 @@
 </template>
 
 <script>
-import { useMatchingStore } from '@/pinia/matching';
+import { useGameStore } from '@/stores/gameStore.js';
+
 export default {
     props: ['imageUrl', 'cardName'],
     setup() {
-        const matchStore = useMatchingStore();
-
-        return { matchStore };
+        const gameStore = useGameStore();
+        return { gameStore };
     },
     data() {
         return {
@@ -28,16 +28,14 @@ export default {
     },
     methods: {
         flipCard() {
-            if(this.showCard === false && this.matchStore.cardsShowing.length < 2) {
-                this.matchStore.cardsShowing.push(this.cardName);
+            if(this.showCard === false && this.gameStore.cardsShowing.length < 2) {
+                this.gameStore.addCardShowing(this.cardName)
             }
 
-            if(this.matchStore.cardsShowing.length == 2 ){
-                this.matchStore.matchingAttempts++;
+            if(this.gameStore.cardsShowing.length >= 2 ){
                 setTimeout(() => {
-                    //this could have been made simpler with card.value instead cardName, but live and learn;
-                    this.checkMatching(this.matchStore.cardsShowing);
-                    this.matchStore.cardsShowing = [];
+                    this.checkMatching(this.gameStore.cardsShowing);
+                    this.gameStore.clearShowing();
                 }, 750);
             }
             
@@ -47,23 +45,21 @@ export default {
             try {
                 if(cardIds !== undefined) {
                     if(cardIds[0].substring(0,1) === cardIds[1].substring(0,1)) {
-                        cardIds.forEach(cardId => {
-                            this.matchStore.cardsMatched.push(cardId);
-                        }) 
+                        this.gameStore.addMatchingCards(cardIds)
                     }
                 }
             } catch (error) {
-                this.matchStore.cardsShowing = [];
+                this.gameStore.clearShowing();
             }
         },
 
     },
     computed: {
         showCard() {
-             return this.matchStore.cardsShowing.includes(this.cardName) ? true : false      
+             return this.gameStore.cardsShowing.includes(this.cardName) ? true : false      
         },
         matched() {
-            return this.matchStore.cardsMatched.includes(this.cardName) ? true : false
+            return this.gameStore.cardsMatched.includes(this.cardName) ? true : false
         }
     }
 }

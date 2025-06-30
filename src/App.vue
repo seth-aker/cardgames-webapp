@@ -17,6 +17,21 @@ if (currentToken != null) {
   <nav-header></nav-header>
   <router-view/>
 </template>
+
+<script>
+import NavHeader from '@/components/NavHeader.vue'
+import { RouterView } from 'vue-router';
+export default {
+  name: 'App',
+  components: {
+    NavHeader,
+    RouterView
+  }
+    
+}
+</script>
+
+
 <style>
 :root{
   --green-background: rgb(84, 134, 84);
