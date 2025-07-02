@@ -1,7 +1,7 @@
 // P2P Tests for the matching game screen.
 import MatchingGame from './MatchingGame.vue'
-import { beforeEach, describe, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/vue';
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { findByTestId, render, screen, waitFor } from '@testing-library/vue';
 import { createPinia, setActivePinia } from 'pinia';
 import { useGameStore } from '../stores/gameStore';
 vi.mock('@/services/deckOfCardsAPI.js', () => ({
@@ -11,6 +11,7 @@ vi.mock('@/services/deckOfCardsAPI.js', () => ({
   }
 }))
 import deckOfCardsAPI from '../services/deckOfCardsAPI';
+import userEvent from '@testing-library/user-event';
 
 describe("MatchingGame component tests", () => {
   beforeEach(() => {
@@ -30,6 +31,7 @@ describe("MatchingGame component tests", () => {
         plugins: [createPinia()],
       },
     });
+    vi.useFakeTimers();
   })
   const mockDeckId = "1234"
   it("fetches a new deck and draws cards when created", async () => {
@@ -125,4 +127,46 @@ describe("MatchingGame component tests", () => {
 
 
   })
+
+  // Refactored Playing Card tests
+  it('24 playing cards should all be rendered on screen', async () => {
+    const gameStore = useGameStore();
+    gameStore.cards = generate24Cards();
+    const cardsComponents = await screen.findAllByTestId('playing-card');
+    expect(cardsComponents).toHaveLength(24)
+    cardsComponents.forEach((card) => {
+      expect(card.classList).not.toContain('show')
+    })
+  })
+  it('playing cards that have been clicked should have the .show class', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const gameStore = useGameStore();
+    gameStore.cards = [{ code: '2h', image: 'img' }]
+    const card = await screen.findByTestId('playing-card');
+    await user.click(card);
+    expect(card.classList).toContain('show')
+  })
+  it('playing cards that have been matched should not be visible (should have class matched)', async () => {
+    const gameStore = useGameStore();
+    gameStore.cards = generate24Cards();
+    gameStore.addMatchingCards(['AS', 'AC']);
+    const cards = await screen.findAllByTestId('playing-card');
+    const matchedCards = cards.filter((card) => card.classList.contains('matched'));
+    expect(matchedCards).toHaveLength(2)
+    matchedCards.forEach((card) => {
+      expect(card).toHaveClass('matched')
+      expect(card).to
+    })
+  })
 });
+
+const generate24Cards = () => {
+  const cardCodes = 'AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD'.split(',')
+
+  const cards = cardCodes.map((code) => ({
+    code: code,
+    image: `https://deckofcardsapi.com/static/img/${code}.png`
+  }))
+  return cards
+}
+// 
