@@ -155,7 +155,6 @@ describe("MatchingGame component tests", () => {
     expect(matchedCards).toHaveLength(2)
     matchedCards.forEach((card) => {
       expect(card).toHaveClass('matched')
-      expect(card).to
     })
   })
 });
