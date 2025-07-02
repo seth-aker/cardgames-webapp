@@ -17,7 +17,9 @@
     </aside>
     <main>
       <playing-card data-testid="playing-card" v-for="(card, index) in gameStore.cards" :key="card.code"
-        :imageUrl="card.image" :cardName="card.code" :class="`card${index}`" />
+        :imageUrl="card.image" :cardName="card.code" :class="{ matched: isCardMatched(card.code) }"
+        :style="() => { `grid-area: card${index}` }" :isFlipped="isCardFlipped(card.code)"
+        :disabled="gameStore.isPaused || gameStore.cardsShowing.length >= 2" @card-clicked="handleCardClick" />
     </main>
     <display-win v-if="gameStore.isGameOver" />
     <pause-menu v-if="gameStore.isPaused && !gameStore.isGameOver" />
@@ -30,7 +32,7 @@ import PlayingCard from '@/components/PlayingCard.vue'
 import deckOfCardsAPI from '@/services/deckOfCardsAPI.js'
 import GameTimer from '@/components/GameTimer.vue'
 import DisplayWin from '@/components/DisplayWin.vue'
-import PauseMenu from '@/components/PauseMenu.vue' // Add this import
+import PauseMenu from '@/components/PauseMenu.vue'
 import { useGameStore } from '@/stores/gameStore.js'
 
 const gameStore = useGameStore()
@@ -42,6 +44,41 @@ const deckInfo = ref({
   shuffled: true,
   remaining: 0,
 })
+
+// Game logic methods
+const isCardFlipped = (cardCode) => {
+  return gameStore.cardsShowing.includes(cardCode)
+}
+
+const isCardMatched = (cardCode) => {
+  return gameStore.cardsMatched.includes(cardCode)
+}
+
+const handleCardClick = (cardName) => {
+  if (gameStore.cardsShowing.length < 2) {
+    gameStore.addCardShowing(cardName)
+
+    if (gameStore.cardsShowing.length === 2) {
+      setTimeout(() => {
+        checkMatching(gameStore.cardsShowing)
+        gameStore.clearShowing()
+      }, 750)
+    }
+  }
+}
+
+const checkMatching = (cardIds) => {
+  try {
+    if (cardIds && cardIds.length === 2) {
+      if (cardIds[0].substring(0, 1) === cardIds[1].substring(0, 1)) {
+        gameStore.addMatchingCards(cardIds)
+      }
+    }
+  } catch (error) {
+    console.error('Error checking card match:', error)
+    gameStore.clearShowing()
+  }
+}
 
 const getCards = async (deckId) => {
   const response = await deckOfCardsAPI.drawCard(deckId)
@@ -91,6 +128,10 @@ main {
 
 .displayNone {
   display: none;
+}
+
+.matched {
+  opacity: 0;
 }
 
 @media only screen and (max-width: 1100px) {
