@@ -1,13 +1,17 @@
 <template>
-  <main class="overlay" >
-      <div class="overlay-content">
-          <h2>	&#9733; &#9733; &#9733; You Win! &#9733; &#9733; &#9733;</h2>
-          <p>Moves taken: {{ gameStore.matchingAttempts }}</p>
-          <p>Time Taken: {{ gameStore.gameTime }}</p>
-          <p><a @click="startNewGame" >New Matching Game</a></p>
-          <p><router-link :to="{name: 'main-menu'}">Home</router-link></p>
-      </div>
-  </main>
+    <main class="fixed h-full w-full z-10 bg-black/50 flex justify-center items-start overflow-hidden">
+        <div class="relative flex flex-col border-2 border-white bg-green-600 top-48 w-80 p-4 text-center">
+            <h2> &#9733; &#9733; &#9733; You Win! &#9733; &#9733; &#9733;</h2>
+            <p>Moves taken: {{ gameStore.matchingAttempts }}</p>
+            <p>Time Taken: {{ gameStore.gameTime }}</p>
+            <p><a @click="startNewGame"
+                    class="text-white no-underline border-2 border-white rounded-xl py-2 px-3 my-2 cursor-pointer block hover:bg-green-500 hover:border-white/25">New
+                    Matching Game</a></p>
+            <p><router-link :to="{ name: 'main-menu' }"
+                    class="text-white no-underline border-2 border-white rounded-xl py-2 px-3 my-2 cursor-pointer block hover:bg-green-500 hover:border-white/25">Home</router-link>
+            </p>
+        </div>
+    </main>
 </template>
 
 <script>
@@ -28,40 +32,5 @@ export default {
 </script>
 
 <style scoped>
-.overlay{
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-    background-color: rgba(0, 0, 0, 0.522);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-
-    overflow: hidden;
-}
-
-.overlay-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    border: 2px white solid ;
-    background-color: rgb(84, 134, 84);
-    top: 200px;
-    width: 300px;
-}
-
-a{
-    color: white;
-    text-decoration: none;
-    border: 2px white solid;
-    border-radius: 10px;
-    padding: 0.4rem 0.8rem;
-
-}
-
-a:hover{
-    background-color: rgb(116, 177, 116);
-    border: 2px rgba(255, 255, 255, 0.267) solid;
-}
+/* All styles converted to Tailwind CSS classes */
 </style>
