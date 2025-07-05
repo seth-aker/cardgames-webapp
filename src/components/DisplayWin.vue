@@ -1,13 +1,15 @@
 <template>
-  <main class="overlay" >
-      <div class="overlay-content">
-          <h2>	&#9733; &#9733; &#9733; You Win! &#9733; &#9733; &#9733;</h2>
-          <p>Moves taken: {{ gameStore.matchingAttempts }}</p>
-          <p>Time Taken: {{ gameStore.gameTime }}</p>
-          <p><a @click="startNewGame" >New Matching Game</a></p>
-          <p><router-link :to="{name: 'main-menu'}">Home</router-link></p>
-      </div>
-  </main>
+    <main class="fixed h-full w-full z-1 bg-black bg-opacity-50 flex justify-center items-start overflow-hidden">
+        <div class="relative flex flex-col border-2 border-white bg-green-700 top-50 w-300">
+            <h2> &#9733; &#9733; &#9733; You Win! &#9733; &#9733; &#9733;</h2>
+            <p>Moves taken: {{ gameStore.matchingAttempts }}</p>
+            <p>Time Taken: {{ gameStore.gameTime }}</p>
+            <p><a @click="startNewGame" class="text-white no-underline border-2 border-white rounded-10 p-1 px-2">New
+                    Matching Game</a></p>
+            <p><router-link :to="{ name: 'main-menu' }"
+                    class="text-white no-underline border-2 border-white rounded-10 p-1 px-2">Home</router-link></p>
+        </div>
+    </main>
 </template>
 
 <script>
@@ -28,40 +30,5 @@ export default {
 </script>
 
 <style scoped>
-.overlay{
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    z-index: 1;
-    background-color: rgba(0, 0, 0, 0.522);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-
-    overflow: hidden;
-}
-
-.overlay-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    border: 2px white solid ;
-    background-color: rgb(84, 134, 84);
-    top: 200px;
-    width: 300px;
-}
-
-a{
-    color: white;
-    text-decoration: none;
-    border: 2px white solid;
-    border-radius: 10px;
-    padding: 0.4rem 0.8rem;
-
-}
-
-a:hover{
-    background-color: rgb(116, 177, 116);
-    border: 2px rgba(255, 255, 255, 0.267) solid;
-}
+@import '@/assets/tailwind.css';
 </style>

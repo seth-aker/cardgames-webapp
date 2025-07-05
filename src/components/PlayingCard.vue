@@ -1,11 +1,13 @@
 <template>
-    <div class="card" @click="handleClick" :class="{ show: isFlipped }" data-testid="playing-card">
-        <div class="card-inner">
-            <div class="card-back">
-                <img :src="cardbackURL" alt="card-back">
+    <div class="bg-transparent w-full perspective-1000 m-2" @click="handleClick" :class="{ show: isFlipped }"
+        data-testid="playing-card">
+        <div class="relative w-full h-full text-center transition-all duration-800"
+            style="transform-style: preserve-3d;">
+            <div class="absolute w-full h-full backface-hidden">
+                <img :src="cardbackURL" alt="card-back" class="h-90">
             </div>
-            <div class="card-face">
-                <img :src="imageUrl" :alt="cardName">
+            <div class="absolute w-full h-full backface-hidden rotate-y-180">
+                <img :src="imageUrl" :alt="cardName" class="h-90">
             </div>
         </div>
     </div>
@@ -49,63 +51,5 @@ const handleClick = () => {
 </script>
 
 <style scoped>
-img {
-    height: 90%;
-}
-
-.card {
-    background-color: transparent;
-    width: 100%;
-    perspective: 1000px;
-    margin: 0.5rem
-}
-
-.card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    -webkit-transition: all 0.8s;
-    -moz-transition: all 0.8s;
-    -ms-transition: all 0.8s;
-    -o-transition: all 0.8s;
-    transition: all 0.8s;
-    transform-style: preserve-3d;
-    -webkit-transform-style: preserve-3d;
-
-}
-
-.show .card-inner {
-    -moz-transform: rotateY(180deg);
-    -webkit-transform: rotateY(180deg);
-    -o-transform: rotateY(180deg);
-    -ms-transform: rotateY(180deg);
-    transform: rotateY(180deg);
-
-}
-
-.card-back,
-.card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-}
-
-.card-face {
-    -moz-transform: rotateY(180deg);
-    -webkit-transform: rotateY(180deg);
-    -o-transform: rotateY(180deg);
-    -ms-transform: rotateY(180deg);
-    transform: rotateY(180deg);
-
-}
-
-@media only screen and (max-width: 600px) {
-    img {
-        height: 100%;
-    }
-}
+@import '@/assets/tailwind.css';
 </style>

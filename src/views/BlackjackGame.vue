@@ -1,38 +1,47 @@
 <template>
-  <div id="blackjack">
-    <aside>
+  <div id="blackjack" class="h-[calc(100vh-4rem)] flex">
+    <aside class="w-15vw bg-green-500 rounded-r-10 p-5 flex flex-col gap-5">
       <h2>Blackjack</h2>
       <div class="game-info">
-        <p>Chips: ${{ blackjackStore.chips }}</p>
-        <p>Bet: ${{ blackjackStore.currentBet }}</p>
-        <p>Wins: {{ blackjackStore.wins }}</p>
-        <p>Losses: {{ blackjackStore.losses }}</p>
+        <p class="m-1.25 font-bold">Chips: ${{ blackjackStore.chips }}</p>
+        <p class="m-1.25 font-bold">Bet: ${{ blackjackStore.currentBet }}</p>
+        <p class="m-1.25 font-bold">Wins: {{ blackjackStore.wins }}</p>
+        <p class="m-1.25 font-bold">Losses: {{ blackjackStore.losses }}</p>
       </div>
-      <div class="betting-controls" v-if="blackjackStore.gamePhase === 'betting'">
+      <div class="betting-controls flex flex-col gap-2.5" v-if="blackjackStore.gamePhase === 'betting'">
         <h3>Place Your Bet</h3>
-        <div class="bet-buttons">
-          <button @click="placeBet(5)" :disabled="blackjackStore.chips < 5">$5</button>
-          <button @click="placeBet(10)" :disabled="blackjackStore.chips < 10">$10</button>
-          <button @click="placeBet(25)" :disabled="blackjackStore.chips < 25">$25</button>
-          <button @click="placeBet(50)" :disabled="blackjackStore.chips < 50">$50</button>
+        <div class="bet-buttons flex flex-col gap-1.25">
+          <button @click="placeBet(5)" :disabled="blackjackStore.chips < 5"
+            class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">$5</button>
+          <button @click="placeBet(10)" :disabled="blackjackStore.chips < 10"
+            class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">$10</button>
+          <button @click="placeBet(25)" :disabled="blackjackStore.chips < 25"
+            class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">$25</button>
+          <button @click="placeBet(50)" :disabled="blackjackStore.chips < 50"
+            class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">$50</button>
         </div>
-        <button @click="dealCards" :disabled="blackjackStore.currentBet === 0" class="deal-button">Deal Cards</button>
+        <button @click="dealCards" :disabled="blackjackStore.currentBet === 0"
+          class="deal-button bg-red-600 font-bold">Deal Cards</button>
       </div>
-      <div class="game-controls" v-if="blackjackStore.gamePhase === 'playing'">
-        <button @click="hit" :disabled="blackjackStore.playerBusted[blackjackStore.currentHandIndex]">Hit</button>
-        <button @click="stand">Stand</button>
-        <button @click="doubleDown" v-if="blackjackStore.canDoubleDown">Double Down</button>
-        <button @click="split" v-if="blackjackStore.canSplit">Split</button>
+      <div class="game-controls flex flex-col gap-2.5" v-if="blackjackStore.gamePhase === 'playing'">
+        <button @click="hit" :disabled="blackjackStore.playerBusted[blackjackStore.currentHandIndex]"
+          class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">Hit</button>
+        <button @click="stand"
+          class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">Stand</button>
+        <button @click="doubleDown" v-if="blackjackStore.canDoubleDown"
+          class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">Double Down</button>
+        <button @click="split" v-if="blackjackStore.canSplit"
+          class="bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer text-sm">Split</button>
       </div>
-      <div class="new-game-controls" v-if="blackjackStore.gamePhase === 'gameOver'">
-        <button @click="newGame" class="new-game-button">New Game</button>
+      <div class="new-game-controls flex flex-col gap-2.5" v-if="blackjackStore.gamePhase === 'gameOver'">
+        <button @click="newGame" class="new-game-button bg-red-600 font-bold">New Game</button>
       </div>
     </aside>
-    <main>
-      <div class="game-area">
-        <div class="dealer-section">
+    <main class="w-85vw p-5 min-h-[calc(100vh-4rem)]" style="background: linear-gradient(135deg, #0f4c3a, #1a5c4a);">
+      <div class="game-area h-full flex flex-col justify-around">
+        <div class="dealer-section text-center">
           <h3>Dealer ({{ dealerHandValue }})</h3>
-          <div class="hand">
+          <div class="hand flex justify-center gap-2.5 m-5 flex-wrap h-140 items-center">
             <playing-card v-for="(card, index) in blackjackStore.dealerHand" :key="`dealer-${card.code}`"
               :imageUrl="shouldShowDealerCard(index) ? card.image : cardBackUrl" :cardName="card.code"
               :isFlipped="shouldShowDealerCard(index)" :disabled="true" />
@@ -40,19 +49,21 @@
         </div>
 
         <div class="player-section">
-          <div v-for="(hand, handIndex) in blackjackStore.playerHands" :key="`hand-${handIndex}`" class="player-hand">
+          <div v-for="(hand, handIndex) in blackjackStore.playerHands" :key="`hand-${handIndex}`"
+            class="player-hand m-2.5 p-2.5 rounded-8 transition-colors">
             <h3 :class="{ 'current-hand': handIndex === blackjackStore.currentHandIndex }">
               Hand {{ handIndex + 1 }} ({{ getHandValue(hand) }})
               <span v-if="blackjackStore.isSplit"> - ${{ blackjackStore.handBets[handIndex] }}</span>
             </h3>
-            <div class="hand">
+            <div class="hand flex justify-center gap-2.5 m-5 flex-wrap h-140 items-center">
               <playing-card v-for="card in hand" :key="`player-${handIndex}-${card.code}`" :imageUrl="card.image"
                 :cardName="card.code" :isFlipped="true" :disabled="true" />
             </div>
           </div>
         </div>
 
-        <div class="game-message" v-if="gameMessage">
+        <div class="game-message text-center text-white bg-black bg-opacity-70 p-5 rounded-10 m-5 mx-auto max-w-400"
+          v-if="gameMessage">
           <h2>{{ gameMessage }}</h2>
         </div>
       </div>
@@ -288,180 +299,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-#blackjack {
-  height: calc(100vh - 4rem);
-  display: flex;
-}
-
-aside {
-  width: 15vw;
-  background-color: rgb(116, 177, 116);
-  border-radius: 0px 10px 10px 0px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.game-info p {
-  margin: 5px 0;
-  font-weight: bold;
-}
-
-.betting-controls,
-.game-controls,
-.new-game-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.bet-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-button {
-  background-color: rgb(84, 134, 84);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-button:hover:not(:disabled) {
-  background-color: rgb(116, 177, 116);
-}
-
-button:disabled {
-  background-color: #666;
-  cursor: not-allowed;
-}
-
-.deal-button,
-.new-game-button {
-  background-color: rgb(200, 100, 100);
-  font-weight: bold;
-}
-
-.deal-button:hover:not(:disabled),
-.new-game-button:hover {
-  background-color: rgb(220, 120, 120);
-}
-
-main {
-  width: 85vw;
-  padding: 20px;
-  background: linear-gradient(135deg, #0f4c3a, #1a5c4a);
-  min-height: calc(100vh - 4rem);
-}
-
-.game-area {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-}
-
-.dealer-section,
-.player-section {
-  text-align: center;
-}
-
-.player-hand {
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.current-hand {
-  color: #ffeb3b;
-  text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
-}
-
-.hand {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px 0;
-  flex-wrap: wrap;
-  height: 140px;
-  align-items: center;
-}
-
-.hand .card {
-  width: 90px;
-  height: 130px;
-  flex-shrink: 0;
-}
-
-.game-message {
-  text-align: center;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 20px;
-  border-radius: 10px;
-  margin: 20px auto;
-  max-width: 400px;
-}
-
-@media only screen and (max-width: 1100px) {
-  #blackjack {
-    flex-direction: column;
-  }
-
-  aside {
-    width: 100vw;
-    height: auto;
-    flex-direction: row;
-    justify-content: space-around;
-    border-radius: 0;
-  }
-
-  main {
-    width: 100vw;
-  }
-
-  .betting-controls,
-  .game-controls,
-  .new-game-controls {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .bet-buttons {
-    flex-direction: row;
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  .hand {
-    gap: 5px;
-    height: 100px;
-  }
-
-  .hand .card {
-    width: 65px;
-    height: 90px;
-  }
-
-  aside {
-    flex-direction: column;
-    padding: 10px;
-  }
-
-  .betting-controls,
-  .game-controls,
-  .new-game-controls {
-    flex-direction: column;
-  }
-
-  .bet-buttons {
-    flex-direction: column;
-  }
-}
+@import '@/assets/tailwind.css';
 </style>

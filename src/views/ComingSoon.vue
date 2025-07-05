@@ -1,5 +1,5 @@
 <template>
-  <div class="coming-soon">
+  <div class="coming-soon text-black">
     <h1>Coming Soon!</h1>
   </div>
 </template>
@@ -12,7 +12,5 @@ export default {
 </script>
 
 <style scoped>
-.coming-soon{
-  color: black;
-}
+@import '@/assets/tailwind.css';
 </style>

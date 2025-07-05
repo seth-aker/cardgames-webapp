@@ -1,6 +1,6 @@
 <template>
-  <div id="matching">
-    <aside>
+  <div id="matching" class="h-[calc(100vh-4rem)] flex">
+    <aside class="w-10vw bg-green-500 rounded-r-10 p-2.5">
       <h2>Match all the cards to win!</h2>
       <span>
         <p>Moves: {{ gameStore.matchingAttempts }}</p>
@@ -10,12 +10,14 @@
       </span>
       <span><game-timer :isGameOver="gameStore.isGameOver" /></span>
       <span>
-        <button @click="gameStore.togglePause()" class="pause-button">
+        <button @click="gameStore.togglePause()"
+          class="pause-button bg-green-700 text-white border-none rounded-5 p-2 px-4 cursor-pointer m-2.5">
           {{ gameStore.isPaused ? 'Resume' : 'Pause' }}
         </button>
       </span>
     </aside>
-    <main>
+    <main class="grid grid-cols-8 grid-rows-3 w-90vw justify-items-center h-auto overflow-hidden"
+      style="grid-template-areas: 'card0 card1 card2 card3 card4 card5 card6 card7' 'card8 card9 card10 card11 card12 card13 card14 card15' 'card16 card17 card18 card19 card20 card21 card22 card23';">
       <playing-card data-testid="playing-card" v-for="(card, index) in gameStore.cards" :key="card.code"
         :imageUrl="card.image" :cardName="card.code" :class="{ matched: isCardMatched(card.code) }"
         :style="() => { `grid-area: card${index}` }" :isFlipped="isCardFlipped(card.code)"
@@ -101,110 +103,5 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#matching {
-  height: calc(100vh - 4rem);
-  display: flex;
-}
-
-aside {
-  width: 10vw;
-  background-color: rgb(116, 177, 116);
-  border-radius: 0px 10px 10px 0px;
-  padding: 10px;
-}
-
-main {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  grid-template-areas: "card0 card1 card2 card3 card4 card5 card6 card7"
-    "card8 card9 card10 card11 card12 card13 card14 card15"
-    "card16 card17 card18 card19 card20 card21 card22 card23";
-  width: 90vw;
-  justify-items: center;
-  height: -webkit-fill-available;
-  overflow: hidden;
-}
-
-.displayNone {
-  display: none;
-}
-
-.matched {
-  opacity: 0;
-}
-
-@media only screen and (max-width: 1100px) {
-  #matching {
-    flex-direction: column-reverse;
-    justify-content: space-between;
-
-  }
-
-  main {
-    width: 100vw;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    grid-template-areas: "card0 card1 card2 card3 card4 card5"
-      "card6 card7 card8 card9 card10 card11"
-      "card12 card13 card14 card15 card16 card17"
-      "card18 card19 card20 card21 card22 card23"
-  }
-
-  aside {
-    height: 12vh;
-    display: flex;
-    align-content: flex-start;
-    width: 100vw;
-  }
-
-  aside span,
-  aside h2 {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-  }
-
-  h2 {
-    font-size: 12px;
-  }
-
-  p {
-    font-size: 10px;
-  }
-
-  .pause-button {
-    background-color: rgb(84, 134, 84);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    margin: 10px 0;
-  }
-
-  .pause-button:hover {
-    background-color: rgb(116, 177, 116);
-  }
-}
-
-@media only screen and (max-width: 600px) {
-
-  main {
-    width: 100vw;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-areas: "card0 card1 card2 card3"
-      "card4 card5 card6 card7"
-      "card8 card9 card10 card11"
-      "card12 card13 card14 card15"
-      "card16 card17 card18 card19"
-      "card20 card21 card22 card23"
-  }
-
-  aside {
-    height: 9vh;
-  }
-
-}
+@import '@/assets/tailwind.css';
 </style>

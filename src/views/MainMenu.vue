@@ -1,24 +1,32 @@
 <template>
-    <main>
-        <div class="menu-options">
-            <div class="menu-option new-game">
+    <main class="h-90vh relative">
+        <div class="menu-options pt-20vh flex flex-col items-center">
+            <div
+                class="menu-option new-game flex flex-col items-center justify-center w-300 p-0 m-1.25 bg-green-700 text-white border-2 border-solid rounded-10 text-1.25rem">
                 <div class="dropdown">
-                    <button type="button" class="collapsable" @click="toggleNewGameActive">New Game</button>
+                    <button type="button"
+                        class="collapsable border-none bg-inherit outline-none text-white font-inherit w-300 h-inherit p-4">New
+                        Game</button>
 
-                    <div class="dropdown-content" :class="{ active: newGameActive }">
-                        <router-link :to="{ name: 'matching' }"
-                            @click="$store.commit('CLEAR_MATCHING')">Matching</router-link>
-                        <router-link :to="{ name: 'blackjack' }">Blackjack</router-link>
-                        <router-link :to="{ name: 'coming-soon' }">Hearts</router-link>
+                    <div class="dropdown-content flex flex-col p-0 px-4.5 max-h-0 overflow-hidden transition-all duration-500 ease-in-out bg-inherit w-300"
+                        :class="{ active: newGameActive }">
+                        <router-link :to="{ name: 'matching' }" @click="$store.commit('CLEAR_MATCHING')"
+                            class="text-white no-underline p-4">Matching</router-link>
+                        <router-link :to="{ name: 'blackjack' }"
+                            class="text-white no-underline p-4">Blackjack</router-link>
+                        <router-link :to="{ name: 'coming-soon' }"
+                            class="text-white no-underline p-4">Hearts</router-link>
                     </div>
                 </div>
 
             </div>
-            <div class="menu-option">
-                <a href="https://www.linkedin.com/in/sethaker">About Me</a>
+            <div
+                class="menu-option flex flex-col items-center justify-center w-300 p-0 m-1.25 bg-green-700 text-white border-2 border-solid rounded-10 text-1.25rem">
+                <a href="https://www.linkedin.com/in/sethaker" class="text-white no-underline p-4">About Me</a>
             </div>
-            <div class="menu-option">
-                <a href="https://github.com/seth-aker/">Source Code</a>
+            <div
+                class="menu-option flex flex-col items-center justify-center w-300 p-0 m-1.25 bg-green-700 text-white border-2 border-solid rounded-10 text-1.25rem">
+                <a href="https://github.com/seth-aker/" class="text-white no-underline p-4">Source Code</a>
             </div>
         </div>
     </main>
@@ -53,81 +61,5 @@ export default {
 </script>
 
 <style scoped>
-main {
-    height: 90vh;
-    position: relative;
-}
-
-.menu-options {
-    padding-top: 20vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.menu-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 300px;
-    padding: 0;
-    margin: 5px;
-    background-color: rgb(84, 134, 84);
-    color: white;
-    border: 2px solid;
-    border-radius: 10px;
-    font-size: 1.25rem;
-}
-
-
-.menu-option:hover {
-    background-color: rgb(116, 177, 116);
-    border: 2px rgba(255, 255, 255, 0.267) solid;
-}
-
-.menu-option a {
-    color: white;
-    text-decoration: none;
-    padding: 1rem;
-}
-
-.menu-option .dropdown button {
-    border: none;
-    background-color: inherit;
-    outline: none;
-    color: white;
-    font: inherit;
-    width: 300px;
-    height: inherit;
-    padding: 1rem;
-
-}
-
-
-.dropdown-content {
-    display: flex;
-    flex-direction: column;
-    padding: 0 18px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 500ms ease-in-out;
-    background-color: inherit;
-    width: 300px;
-
-}
-
-.dropdown-content a {
-    padding: 1rem;
-
-}
-
-.dropdown-content a:hover {
-    background-color: rgb(135, 192, 135);
-    border-radius: 10px;
-}
-
-.active {
-    max-height: 300px;
-}
+@import '@/assets/tailwind.css';
 </style>

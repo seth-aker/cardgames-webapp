@@ -1,6 +1,8 @@
 <template>
-  <nav-header></nav-header>
-  <router-view/>
+  <div id="app" class="font-sans antialiased text-center text-white m-0 overflow-hidden">
+    <nav-header></nav-header>
+    <router-view />
+  </div>
 </template>
 
 <script>
@@ -12,28 +14,15 @@ export default {
     NavHeader,
     RouterView
   }
-    
+
 }
 </script>
 
-
 <style>
-#app {
-font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: white;
-  margin: 0;
-  overflow: hidden;
-}
-body{
-  margin: 0;
-  overflow: hidden;
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-}
+@import '@/assets/tailwind.css';
 
+body {
+  @apply m-0 overflow-hidden fixed w-screen h-screen;
+}
 </style>
 ``
