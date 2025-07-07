@@ -1,24 +1,30 @@
 <template>
-    <main>
-        <div class="menu-options">
-            <div class="menu-option new-game">
-                <div class="dropdown">
-                    <button type="button" class="collapsable" @click="toggleNewGameActive">New Game</button>
+    <main class="h-screen relative">
+        <div class="pt-32 flex flex-col items-center">
+            <div
+                class="flex flex-col items-center justify-center w-80 p-0 m-1 bg-green-600 text-white border-2 border-solid rounded-xl text-xl hover:bg-green-500 hover:border-white/25">
+                <div class="w-full">
+                    <button type="button"
+                        class="border-none bg-inherit outline-none text-white font-inherit w-80 h-inherit p-4"
+                        @click="toggleNewGameActive">New Game</button>
 
-                    <div class="dropdown-content" :class="{ active: newGameActive }">
-                        <router-link :to="{ name: 'matching' }"
-                            @click="$store.commit('CLEAR_MATCHING')">Matching</router-link>
-                        <router-link :to="{ name: 'blackjack' }">Blackjack</router-link>
-                        <router-link :to="{ name: 'coming-soon' }">Hearts</router-link>
+                    <div class="dropdown-content flex flex-col px-5 bg-inherit w-80" :class="{ active: newGameActive }">
+                        <router-link :to="{ name: 'matching' }" @click="$store.commit('CLEAR_MATCHING')"
+                            class="text-white no-underline p-4 hover:bg-green-400 rounded-xl">Matching</router-link>
+                        <router-link :to="{ name: 'blackjack' }"
+                            class="text-white no-underline p-4 hover:bg-green-400 rounded-xl">Blackjack</router-link>
+                        <router-link :to="{ name: 'coming-soon' }"
+                            class="text-white no-underline p-4 hover:bg-green-400 rounded-xl">Hearts</router-link>
                     </div>
                 </div>
-
             </div>
-            <div class="menu-option">
-                <a href="https://www.linkedin.com/in/sethaker">About Me</a>
+            <div
+                class="flex flex-col items-center justify-center w-80 p-0 m-1 bg-green-600 text-white border-2 border-solid rounded-xl text-xl hover:bg-green-500 hover:border-white/25">
+                <a href="https://www.linkedin.com/in/sethaker" class="text-white no-underline p-4">About Me</a>
             </div>
-            <div class="menu-option">
-                <a href="https://github.com/seth-aker/">Source Code</a>
+            <div
+                class="flex flex-col items-center justify-center w-80 p-0 m-1 bg-green-600 text-white border-2 border-solid rounded-xl text-xl hover:bg-green-500 hover:border-white/25">
+                <a href="https://github.com/seth-aker/" class="text-white no-underline p-4">Source Code</a>
             </div>
         </div>
     </main>
@@ -53,78 +59,11 @@ export default {
 </script>
 
 <style scoped>
-main {
-    height: 90vh;
-    position: relative;
-}
-
-.menu-options {
-    padding-top: 20vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.menu-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 300px;
-    padding: 0;
-    margin: 5px;
-    background-color: rgb(84, 134, 84);
-    color: white;
-    border: 2px solid;
-    border-radius: 10px;
-    font-size: 1.25rem;
-}
-
-
-.menu-option:hover {
-    background-color: rgb(116, 177, 116);
-    border: 2px rgba(255, 255, 255, 0.267) solid;
-}
-
-.menu-option a {
-    color: white;
-    text-decoration: none;
-    padding: 1rem;
-}
-
-.menu-option .dropdown button {
-    border: none;
-    background-color: inherit;
-    outline: none;
-    color: white;
-    font: inherit;
-    width: 300px;
-    height: inherit;
-    padding: 1rem;
-
-}
-
-
+/* Custom dropdown animation */
 .dropdown-content {
-    display: flex;
-    flex-direction: column;
-    padding: 0 18px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 500ms ease-in-out;
-    background-color: inherit;
-    width: 300px;
-
-}
-
-.dropdown-content a {
-    padding: 1rem;
-
-}
-
-.dropdown-content a:hover {
-    background-color: rgb(135, 192, 135);
-    border-radius: 10px;
 }
 
 .active {
