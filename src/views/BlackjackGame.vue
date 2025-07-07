@@ -50,16 +50,16 @@
           <h3 class="text-xl font-semibold mb-4">Dealer ({{ dealerHandValue }})</h3>
           <div class="flex justify-center gap-2 my-5 flex-wrap min-h-[140px] items-center">
             <div v-for="(card, index) in blackjackStore.dealerHand" :key="`dealer-${card.code}`"
-              class="w-[90px] h-[130px] sm:w-[65px] sm:h-[90px]">
+              class="w-[120px] h-[200px]">
               <playing-card :imageUrl="shouldShowDealerCard(index) ? card.image : cardBackUrl" :cardName="card.code"
                 :isFlipped="shouldShowDealerCard(index)" :disabled="true" />
             </div>
           </div>
         </div>
 
-        <div class="text-center">
+        <div class="text-center h-1/3 w-full">
           <div v-for="(hand, handIndex) in blackjackStore.playerHands" :key="`hand-${handIndex}`"
-            class="my-2 p-2 rounded-lg transition-colors duration-300">
+            class="my-2 p-2 rounded-lg transition-colors duration-300 h-full">
             <h3 class="text-lg font-semibold mb-2"
               :class="{ 'text-yellow-300 drop-shadow-lg': handIndex === blackjackStore.currentHandIndex }">
               Hand {{ handIndex + 1 }} ({{ getHandValue(hand) }})
@@ -67,7 +67,7 @@
             </h3>
             <div class="flex justify-center gap-2 my-5 flex-wrap min-h-[140px] items-center">
               <div v-for="card in hand" :key="`player-${handIndex}-${card.code}`"
-                class="w-[90px] h-[130px] sm:w-[65px] sm:h-[90px]">
+                class="w-[120px] h-[200px]">
                 <playing-card :imageUrl="card.image" :cardName="card.code" :isFlipped="true" :disabled="true" />
               </div>
             </div>
