@@ -101,18 +101,89 @@ const totalCards = ref(312) // 6 decks * 52 cards
 // Computed properties
 const dealerHandValue = computed(() => {
   if (blackjackStore.gamePhase === 'playing') {
-    // Only show first card value during play
-    return calculateHandValue([blackjackStore.dealerHand[0]])
+    // Show value of visible dealer cards during play
+    const visibleValue = blackjackStore.dealerVisibleValue
+    if (visibleValue === 0 && blackjackStore.dealerHand.length > 0) {
+      // Fallback: calculate value of first card if visible value is 0
+      return calculateHandValue([blackjackStore.dealerHand[0]])
+    }
+    return visibleValue
   }
   return calculateHandValue(blackjackStore.dealerHand)
 })
 
 const gameMessage = computed(() => {
   if (blackjackStore.gamePhase === 'gameOver') {
-    return 'Game Over! Check your results.'
+    return getGameOverMessage()
   }
+  
+  // Check for player bust during play
+  const currentHand = blackjackStore.currentHand
+  const currentHandValue = calculateHandValue(currentHand)
+  
+  if (blackjackStore.playerBusted[blackjackStore.currentHandIndex]) {
+    return 'You bust!'
+  }
+  
+  // Check for player blackjack
+  if (currentHandValue === 21 && currentHand.length === 2) {
+    return 'You got blackjack!'
+  }
+  
   return ''
 })
+
+const getGameOverMessage = () => {
+  const dealerValue = calculateHandValue(blackjackStore.dealerHand)
+  const dealerBlackjack = dealerValue === 21 && blackjackStore.dealerHand.length === 2
+  const dealerBusted = dealerValue > 21
+  
+  // Check if player has any winning hands
+  let playerWins = false
+  let playerLoses = false
+  let push = false
+  
+  blackjackStore.playerHands.forEach((hand, index) => {
+    const handValue = calculateHandValue(hand)
+    const isBlackjack = handValue === 21 && hand.length === 2
+    const handBusted = blackjackStore.playerBusted[index]
+    
+    if (handBusted) {
+      playerLoses = true
+    } else if (dealerBusted) {
+      playerWins = true
+    } else if (isBlackjack && !dealerBlackjack) {
+      playerWins = true
+    } else if (dealerBlackjack && !isBlackjack) {
+      playerLoses = true
+    } else if (isBlackjack && dealerBlackjack) {
+      push = true
+    } else {
+      if (handValue > dealerValue) {
+        playerWins = true
+      } else if (handValue < dealerValue) {
+        playerLoses = true
+      } else {
+        push = true
+      }
+    }
+  })
+  
+  // Determine final message
+  if (playerWins && !playerLoses) {
+    return 'You win!'
+  } else if (playerLoses && !playerWins) {
+    return 'Dealer wins!'
+  } else if (push) {
+    return 'Push - it\'s a tie!'
+  } else if (dealerBlackjack) {
+    return 'Dealer got blackjack!'
+  } else if (dealerBusted) {
+    return 'Dealer busts!'
+  } else {
+    return 'Game over! Check your results.'
+  }
+}
 
 // Methods
 const calculateHandValue = (hand) => {
@@ -145,7 +216,14 @@ const getHandValue = (hand) => {
 }
 
 const shouldShowDealerCard = (index) => {
-  return blackjackStore.gamePhase === 'gameOver' || blackjackStore.dealerCardsRevealed[index]
+  if (blackjackStore.gamePhase === 'gameOver') {
+    return true
+  }
+  // Check if the card exists and should be shown
+  if (index >= blackjackStore.dealerCardsRevealed.length) {
+    return false
+  }
+  return blackjackStore.dealerCardsRevealed[index]
 }
 
 const placeBet = (amount) => {
@@ -154,11 +232,35 @@ const placeBet = (amount) => {
 
 const dealCards = async () => {
   try {
-    // Draw 4 cards (2 for player, 2 for dealer)
-    const response = await drawCardWithTracking(4)
-    const cards = response.data.cards
+    // Set game phase to playing first to ensure buttons appear
+    blackjackStore.gamePhase = 'playing'
+    
+    // Deal cards one at a time with delays for more realistic experience
+    // First, deal player's first card
+    const response1 = await drawCardWithTracking(1)
+    const playerCard1 = response1.data.cards[0]
+    blackjackStore.playerHands[0] = [playerCard1]
+    await new Promise(resolve => setTimeout(resolve, 500))
 
-    blackjackStore.dealInitialCards([cards[0], cards[2]], [cards[1], cards[3]])
+    // Deal dealer's first card (face up)
+    const response2 = await drawCardWithTracking(1)
+    const dealerCard1 = response2.data.cards[0]
+    blackjackStore.dealerHand = [dealerCard1]
+    blackjackStore.dealerCardsRevealed = [true]
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // Deal player's second card
+    const response3 = await drawCardWithTracking(1)
+    const playerCard2 = response3.data.cards[0]
+    blackjackStore.playerHands[0].push(playerCard2)
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // Deal dealer's second card (face down)
+    const response4 = await drawCardWithTracking(1)
+    const dealerCard2 = response4.data.cards[0]
+    blackjackStore.dealerHand.push(dealerCard2)
+    blackjackStore.dealerCardsRevealed.push(false)
+    await new Promise(resolve => setTimeout(resolve, 500))
 
     // Check for blackjacks
     const playerVal = calculateHandValue(blackjackStore.currentHand)
@@ -251,18 +353,26 @@ const dealerPlay = async () => {
       blackjackStore.dealerHit(card)
       await new Promise(resolve => setTimeout(resolve, 400))
 
-      // Then flip it face up
+      // Then flip it face up and show the updated score
       blackjackStore.revealDealerCard(blackjackStore.dealerHand.length - 1)
       await new Promise(resolve => setTimeout(resolve, 800))
+    }
+
+    // Check if dealer busts
+    const dealerVal = calculateHandValue(blackjackStore.dealerHand)
+    if (dealerVal > 21) {
+      // Dealer busts, show message and end game
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      blackjackStore.endGame(false, true)
+      return
     }
 
     // Reveal all cards at the end
     blackjackStore.revealAllDealerCards()
 
-    const dealerVal = calculateHandValue(blackjackStore.dealerHand)
     const dealerBlackjack = dealerVal === 21 && blackjackStore.dealerHand.length === 2
 
-    blackjackStore.endGame(dealerBlackjack, dealerVal > 21)
+    blackjackStore.endGame(dealerBlackjack, false)
   } catch (error) {
     console.error('Error in dealer play:', error)
   }

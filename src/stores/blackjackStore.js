@@ -53,7 +53,49 @@ export const useBlackjackStore = defineStore('blackjack', {
 
     allHandsComplete: (state) => {
       return state.currentHandIndex >= state.playerHands.length - 1
+    },
+
+    dealerVisibleHand: (state) => {
+      // Return only the cards that are currently visible
+      return state.dealerHand.filter((_, index) => state.dealerCardsRevealed[index])
+    },
+
+    dealerVisibleValue: (state) => {
+      // Calculate value of currently visible dealer cards
+      const visibleHand = state.dealerVisibleHand
+      if (visibleHand.length === 0) return 0
+      
+      // Debug: log the visible hand for troubleshooting
+      // console.log('Visible hand:', visibleHand)
+      
+      return calculateHandValue(visibleHand)
     }
+  },
+
+  // Helper function for calculating hand value (available to getters)
+  calculateHandValue(hand) {
+    let value = 0
+    let aces = 0
+
+    for (const card of hand) {
+      const cardValue = card.value
+      if (cardValue === 'ACE') {
+        aces++
+        value += 11
+      } else if (['KING', 'QUEEN', 'JACK'].includes(cardValue)) {
+        value += 10
+      } else {
+        value += parseInt(cardValue)
+      }
+    }
+
+    // Handle aces
+    while (value > 21 && aces > 0) {
+      value -= 10
+      aces--
+    }
+
+    return value
   },
 
   actions: {
