@@ -100,18 +100,18 @@ const totalCards = ref(312) // 6 decks * 52 cards
 
 // Computed properties
 const dealerHandValue = computed(() => {
-  if (blackjackStore.gamePhase === 'playing') {
-    // Only show first card value during play
-    return calculateHandValue([blackjackStore.dealerHand[0]])
+  if (blackjackStore.gamePhase === 'playing' || blackjackStore.gamePhase === 'dealing') {
+    // Show value of revealed cards only during dealing and playing phases
+    const revealedCards = blackjackStore.dealerHand.filter((card, index) => 
+      blackjackStore.dealerCardsRevealed[index]
+    )
+    return calculateHandValue(revealedCards)
   }
   return calculateHandValue(blackjackStore.dealerHand)
 })
 
 const gameMessage = computed(() => {
-  if (blackjackStore.gamePhase === 'gameOver') {
-    return 'Game Over! Check your results.'
-  }
-  return ''
+  return blackjackStore.gameMessage
 })
 
 // Methods
@@ -154,11 +154,30 @@ const placeBet = (amount) => {
 
 const dealCards = async () => {
   try {
-    // Draw 4 cards (2 for player, 2 for dealer)
-    const response = await drawCardWithTracking(4)
-    const cards = response.data.cards
+    blackjackStore.startDealing()
+    
+    // Deal cards one at a time like in real blackjack
+    // First card to player
+    let response = await drawCardWithTracking(1)
+    blackjackStore.dealCardToPlayer(response.data.cards[0])
+    await new Promise(resolve => setTimeout(resolve, 600))
+    
+    // First card to dealer (face up)
+    response = await drawCardWithTracking(1)
+    blackjackStore.dealCardToDealer(response.data.cards[0], true)
+    await new Promise(resolve => setTimeout(resolve, 600))
+    
+    // Second card to player
+    response = await drawCardWithTracking(1)
+    blackjackStore.dealCardToPlayer(response.data.cards[0])
+    await new Promise(resolve => setTimeout(resolve, 600))
+    
+    // Second card to dealer (face down - hole card)
+    response = await drawCardWithTracking(1)
+    blackjackStore.dealCardToDealer(response.data.cards[0], false)
+    await new Promise(resolve => setTimeout(resolve, 600))
 
-    blackjackStore.dealInitialCards([cards[0], cards[2]], [cards[1], cards[3]])
+    blackjackStore.finishDealing()
 
     // Check for blackjacks
     const playerVal = calculateHandValue(blackjackStore.currentHand)

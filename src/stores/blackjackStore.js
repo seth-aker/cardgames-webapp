@@ -10,13 +10,14 @@ export const useBlackjackStore = defineStore('blackjack', {
     currentHandIndex: 0, // Which hand is currently being played
     dealerHand: [],
     dealerCardsRevealed: [], // Track which dealer cards are face up
-    gamePhase: 'betting', // 'betting', 'playing', 'gameOver'
+    gamePhase: 'betting', // 'betting', 'dealing', 'playing', 'gameOver'
     playerBusted: [false], // Array to track busted status for each hand
     dealerBusted: false,
     playerBlackjack: [false], // Array to track blackjack for each hand
     dealerBlackjack: false,
     handBets: [0], // Bet amount for each hand
-    isSplit: false
+    isSplit: false,
+    gameMessage: '' // Detailed game messages
   }),
 
   getters: {
@@ -64,11 +65,11 @@ export const useBlackjackStore = defineStore('blackjack', {
       }
     },
 
-    dealInitialCards(playerCards, dealerCards) {
-      this.playerHands = [[...playerCards]]
-      this.dealerHand = [...dealerCards]
-      this.dealerCardsRevealed = [true, false] // First card face up, second face down
-      this.gamePhase = 'playing'
+    startDealing() {
+      this.gamePhase = 'dealing'
+      this.playerHands = [[]]
+      this.dealerHand = []
+      this.dealerCardsRevealed = []
       this.playerBusted = [false]
       this.dealerBusted = false
       this.playerBlackjack = [false]
@@ -76,6 +77,21 @@ export const useBlackjackStore = defineStore('blackjack', {
       this.handBets = [this.currentBet]
       this.currentHandIndex = 0
       this.isSplit = false
+      this.gameMessage = 'Dealing cards...'
+    },
+
+    dealCardToPlayer(card) {
+      this.playerHands[0].push(card)
+    },
+
+    dealCardToDealer(card, faceUp = true) {
+      this.dealerHand.push(card)
+      this.dealerCardsRevealed.push(faceUp)
+    },
+
+    finishDealing() {
+      this.gamePhase = 'playing'
+      this.gameMessage = ''
     },
 
     playerHit(card) {
@@ -129,6 +145,11 @@ export const useBlackjackStore = defineStore('blackjack', {
 
     playerBust() {
       this.playerBusted[this.currentHandIndex] = true
+      if (this.isSplit) {
+        this.gameMessage = `Hand ${this.currentHandIndex + 1} busted!`
+      } else {
+        this.gameMessage = 'You bust!'
+      }
     },
 
     playerStand() {
@@ -148,8 +169,18 @@ export const useBlackjackStore = defineStore('blackjack', {
       this.dealerBlackjack = dealerBlackjack
       this.dealerBusted = dealerBusted
 
+      // Set game message based on outcome
+      if (dealerBlackjack) {
+        this.gameMessage = 'Dealer got blackjack!'
+      } else if (dealerBusted) {
+        this.gameMessage = 'Dealer busted! You win!'
+      }
+
       // Calculate winnings for each hand
       const dealerValue = this.calculateHandValue(this.dealerHand)
+      let playerWins = 0
+      let playerLosses = 0
+      let pushes = 0
 
       this.playerHands.forEach((hand, index) => {
         const handValue = this.calculateHandValue(hand)
@@ -159,33 +190,69 @@ export const useBlackjackStore = defineStore('blackjack', {
         if (this.playerBusted[index]) {
           // Hand busted, no chips returned
           this.losses++
+          playerLosses++
         } else if (dealerBusted) {
           // Dealer busted, hand wins
           this.chips += handBet * 2
           this.wins++
+          playerWins++
         } else if (isBlackjack && !dealerBlackjack) {
           // Hand blackjack wins 3:2
           this.chips += Math.floor(handBet * 2.5)
           this.wins++
+          playerWins++
         } else if (dealerBlackjack && !isBlackjack) {
           // Dealer blackjack, hand loses
           this.losses++
+          playerLosses++
         } else if (isBlackjack && dealerBlackjack) {
           // Both blackjack, push
           this.chips += handBet
+          pushes++
         } else {
           // Compare hand values
           if (handValue > dealerValue) {
             this.chips += handBet * 2
             this.wins++
+            playerWins++
           } else if (handValue < dealerValue) {
             this.losses++
+            playerLosses++
           } else {
             // Push
             this.chips += handBet
+            pushes++
           }
         }
       })
+
+      // Set detailed message if not already set
+      if (!this.gameMessage) {
+        if (this.playerHands.length === 1) {
+          // Single hand
+          const playerValue = this.calculateHandValue(this.playerHands[0])
+          const isPlayerBlackjack = playerValue === 21 && this.playerHands[0].length === 2
+          
+          if (isPlayerBlackjack) {
+            this.gameMessage = 'Blackjack! You win!'
+          } else if (playerWins > 0) {
+            this.gameMessage = `You win! (${playerValue} vs ${dealerValue})`
+          } else if (playerLosses > 0) {
+            this.gameMessage = `You lose! (${playerValue} vs ${dealerValue})`
+          } else {
+            this.gameMessage = `Push! (${playerValue} vs ${dealerValue})`
+          }
+        } else {
+          // Multiple hands (split)
+          if (playerWins > 0 && playerLosses === 0) {
+            this.gameMessage = `All hands win!`
+          } else if (playerLosses > 0 && playerWins === 0) {
+            this.gameMessage = `All hands lose!`
+          } else {
+            this.gameMessage = `Mixed results: ${playerWins} wins, ${playerLosses} losses, ${pushes} pushes`
+          }
+        }
+      }
     },
 
     calculateHandValue(hand) {
@@ -226,6 +293,7 @@ export const useBlackjackStore = defineStore('blackjack', {
       this.dealerBlackjack = false
       this.handBets = [0]
       this.isSplit = false
+      this.gameMessage = ''
 
       // Reset chips if player is broke
       if (this.chips <= 0) {
