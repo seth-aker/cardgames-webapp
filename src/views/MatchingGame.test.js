@@ -146,15 +146,15 @@ describe("MatchingGame component tests", () => {
     await user.click(card);
     expect(card.classList).toContain('show')
   })
-  it('playing cards that have been matched should not be visible (should have class opacity-0)', async () => {
+  it('playing cards that have been matched should not be visible (should have class matched)', async () => {
     const gameStore = useGameStore();
     gameStore.cards = generate24Cards();
     gameStore.addMatchingCards(['AS', 'AC']);
     const cards = await screen.findAllByTestId('playing-card');
-    const matchedCards = cards.filter((card) => card.classList.contains('opacity-0'));
+    const matchedCards = cards.filter((card) => card.classList.contains('matched'));
     expect(matchedCards).toHaveLength(2)
     matchedCards.forEach((card) => {
-      expect(card).toHaveClass('opacity-0')
+      expect(card).toHaveClass('matched')
     })
   })
 });
@@ -168,4 +168,4 @@ const generate24Cards = () => {
   }))
   return cards
 }
-//
+// 
