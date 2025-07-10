@@ -19,10 +19,11 @@
     </aside>
     <main
       class="xl:w-[calc(100vw-10rem)] w-full grid xl:grid-cols-8 xl:grid-rows-3 sm:grid-cols-6 sm:grid-rows-4 grid-cols-4 grid-rows-6 justify-items-center h-full overflow-hidden gap-1 p-2">
-      <div v-for="(card, index) in gameStore.cards" :key="card.code" :class="{ 'opacity-0': isCardMatched(card.code) }"
+      <div v-for="(card, index) in gameStore.cards" :key="card.code"
         :style="() => { `grid-area: card${index}` }" class="w-full h-full max-w-[120px] max-h-[160px]">
         <playing-card data-testid="playing-card" :imageUrl="card.image" :cardName="card.code"
-          :isFlipped="isCardFlipped(card.code)" :disabled="gameStore.isPaused || gameStore.cardsShowing.length >= 2"
+          :isFlipped="isCardFlipped(card.code)" :isMatched="isCardMatched(card.code)"
+          :disabled="gameStore.isPaused || gameStore.cardsShowing.length >= 2"
           @card-clicked="handleCardClick" />
       </div>
     </main>

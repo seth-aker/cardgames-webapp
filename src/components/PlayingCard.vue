@@ -1,6 +1,6 @@
 <template>
     <div class="bg-transparent w-full h-full cursor-pointer" style="perspective: 1000px;" @click="handleClick"
-        :class="{ show: isFlipped }" data-testid="playing-card">
+        :class="{ 'opacity-0 pointer-events-none': isMatched, show: isFlipped }" data-testid="playing-card">
         <div class="card-inner relative w-full h-full text-center transition-all duration-800 preserve-3d">
             <div class="card-back absolute w-full h-full backface-hidden flex items-center justify-center">
                 <img :src="cardbackURL" alt="card-back" class="w-full h-full object-contain">
@@ -30,6 +30,10 @@ const props = defineProps({
         default: false
     },
     disabled: {
+        type: Boolean,
+        default: false
+    },
+    isMatched: {
         type: Boolean,
         default: false
     }
