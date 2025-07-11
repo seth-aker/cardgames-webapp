@@ -65,10 +65,6 @@ describe("MatchingGame component tests", () => {
     await waitFor(() => {
       expect(gameStore.isGameOver).toBe(false);
     })
-
-
-
-
     const winMessage = screen.queryByText(/You Win!/i);
     expect(winMessage).not.toBeInTheDocument();
 
@@ -78,8 +74,6 @@ describe("MatchingGame component tests", () => {
   // Test Case 2: isGameOver should be TRUE (win screen is visible)
   it('renders the win screen when all cards are matched', async () => {
     // ARRANGE
-
-
     const gameStore = useGameStore();
 
 
@@ -117,21 +111,19 @@ describe("MatchingGame component tests", () => {
     const gameStore = useGameStore();
     // ASSERT INITIAL STATE
     expect(gameStore.cardsMatched.length).toBe(0)
-    const cardsMatched = await screen.findByText('Cards Matched : 0/24');
+    const cardsMatched = await screen.findByText(/Cards Matched:/i);
     expect(cardsMatched).toBeInTheDocument()
 
     gameStore.addMatchingCards(['KD', 'KS'])
-    const cardsMatched2 = await screen.findByText('Cards Matched : 2/24')
+    const cardsMatched2 = await screen.findByText(/Cards Matched: 2\//i)
     expect(cardsMatched2).toBeInTheDocument()
-
-
 
   })
 
   // Refactored Playing Card tests
-  it('24 playing cards should all be rendered on screen', async () => {
+  it('The number of cards in the cards array should be the same as the number rendered on the screen.', async () => {
     const gameStore = useGameStore();
-    gameStore.cards = generate24Cards();
+    gameStore.cards = generateCards(24);
     const cardsComponents = await screen.findAllByTestId('playing-card');
     expect(cardsComponents).toHaveLength(24)
     cardsComponents.forEach((card) => {
@@ -148,8 +140,8 @@ describe("MatchingGame component tests", () => {
   })
   it('playing cards that have been matched should not be visible (should have class opacity-0)', async () => {
     const gameStore = useGameStore();
-    gameStore.cards = generate24Cards();
-    gameStore.addMatchingCards(['AS', 'AC']);
+    gameStore.cards = generateCards(24);
+    gameStore.addMatchingCards([gameStore.cards[0].code, gameStore.cards[1].code]);
     const cards = await screen.findAllByTestId('playing-card');
     const matchedCards = cards.filter((card) => card.parentElement.classList.contains('opacity-0'));
     expect(matchedCards).toHaveLength(2)
@@ -159,13 +151,36 @@ describe("MatchingGame component tests", () => {
   })
 });
 
-const generate24Cards = () => {
-  const cardCodes = 'AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD'.split(',')
-
+const generateCards = (number) => {
+  const cardCodes = []
+  while(cardCodes.length < number) {
+    const pair = generateCardCodePair();
+    if(!cardCodes.includes(pair[0]) && !cardCodes.includes(pair[1])) {
+      cardCodes.push(...pair)
+    }
+  }
   const cards = cardCodes.map((code) => ({
     code: code,
     image: `https://deckofcardsapi.com/static/img/${code}.png`
   }))
   return cards
 }
-//
+
+const generateCardCodePair = () => {
+  const random = Math.random()
+
+  return [`${value}${randomSuit()}`, `${value}${randomSuit()}`]
+}
+
+const randomSuit = () => {
+  const random = Math.random();
+  if(random < 0.25) {
+    return 'D'
+  } else if (random < 0.5) {
+    return 'C'
+  } else if (random < 0.75) {
+    return 'S'
+  } else {
+    return 'H'
+  }
+}

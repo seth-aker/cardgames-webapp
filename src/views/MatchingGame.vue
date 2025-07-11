@@ -7,7 +7,7 @@
         <p class="xl:text-base text-xs">Moves: {{ gameStore.matchingAttempts }}</p>
       </span>
       <span class="xl:p-0 p-2 flex items-center">
-        <p class="xl:text-base text-xs">Cards Matched : {{ gameStore.cardsMatched.length }}/24</p>
+        <p class="xl:text-base text-xs">Cards Matched: {{ gameStore.cardsMatched.length }}/{{ gameStore.cards.length }}</p>
       </span>
       <span class="xl:p-0 p-2 flex items-center"><game-timer :isGameOver="gameStore.isGameOver" /></span>
       <span class="xl:p-0 p-2 flex items-center">
