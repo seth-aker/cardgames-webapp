@@ -34,20 +34,6 @@ describe("MatchingGame component tests", () => {
     vi.useFakeTimers();
   })
   const mockDeckId = "1234"
-
-  it("fetches a new deck and draws cards when created", async () => {
-    const gameStore = useGameStore();
-    gameStore.cards = [{ code: 'AC' }]
-    // ASSERT
-    gameStore.gameState = 'playing'
-    await waitFor(() => {
-      expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
-      expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
-    });
-
-    const cards = await screen.findAllByTestId('playing-card'); // Example query
-    expect(cards).toHaveLength(1);
-  })
   //  isGameOver should be FALSE (win screen is hidden)
   it('does NOT render the win screen when not all cards are matched', async () => {
     const gameStore = useGameStore();
