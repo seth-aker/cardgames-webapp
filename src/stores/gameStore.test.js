@@ -10,12 +10,12 @@ describe('Game store', () => {
 
     it('should be initialized with correct default values', () => {
         const store = useGameStore();
-
         expect(store.pageTitle).toBe("Let's Play Some Card Games!");
         expect(store.cards).toEqual([]);
         expect(store.cardsMatched).toEqual([]);
         expect(store.matchingAttempts).toBe(0);
         expect(store.gameTime).toEqual("00:00");
+        expect(store.difficulty).not.toBeUndefined()
     })
     describe('Getters', () => {
         it('isGameOver returns false when cards array is empty', () => {
@@ -23,17 +23,17 @@ describe('Game store', () => {
             expect(store.cards).toEqual([]);
             expect(store.isGameOver).toBe(false)
         }),
-        it('isGameOver returns false when cards array length is NOT 0 and cards matched length are not equal', () => {
-            const store = useGameStore();
-            store.cards = [{code: 'AS'}]
-            expect(store.cards.length).toBe(1)
-            expect(store.cardsMatched.length).toBe(0)
-            expect(store.isGameOver).toBe(false)
-        })
+            it('isGameOver returns false when cards array length is NOT 0 and cards matched length are not equal', () => {
+                const store = useGameStore();
+                store.cards = [{ code: 'AS' }]
+                expect(store.cards.length).toBe(1)
+                expect(store.cardsMatched.length).toBe(0)
+                expect(store.isGameOver).toBe(false)
+            })
         it('isGameOver returns true when cards array length is NOT 0 and cardsMatched array length are equal', () => {
             const store = useGameStore();
-            store.cards = [{code: 'AS'}];
-            store.cardsMatched = [{code: 'AS'}]
+            store.cards = [{ code: 'AS' }];
+            store.cardsMatched = [{ code: 'AS' }]
             expect(store.cards.length).toBe(1)
             expect(store.cardsMatched.length).toBe(1)
             expect(store.isGameOver).toBe(true)
@@ -42,14 +42,14 @@ describe('Game store', () => {
     describe('Actions', () => {
         it('addCard should add card object when card code is not in cards array', () => {
             const store = useGameStore();
-            const card = {code: 'AS', image: 'test'}
+            const card = { code: 'AS', image: 'test' }
             store.addCard([card]);
             expect(store.cards.length).toBe(1)
             expect(store.cards).toContainEqual(card)
         })
         it('addCard should NOT add card object when card already exists in cards array', () => {
             const store = useGameStore();
-            const card = {code: 'AS', image: 'test'}
+            const card = { code: 'AS', image: 'test' }
             store.cards = [card]
             store.addCard([card]);
             expect(store.cards.length).toBe(1)

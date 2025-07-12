@@ -1,7 +1,7 @@
 // P2P Tests for the matching game screen.
 import MatchingGame from './MatchingGame.vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { findByTestId, render, screen, waitFor } from '@testing-library/vue';
+import { render, screen, waitFor } from '@testing-library/vue';
 import { createPinia, setActivePinia } from 'pinia';
 import { useGameStore } from '../stores/gameStore';
 vi.mock('@/services/deckOfCardsAPI.js', () => ({
@@ -39,8 +39,6 @@ describe("MatchingGame component tests", () => {
     gameStore.cards = [{ code: 'AC' }]
     // ASSERT
     expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
-
-
     await waitFor(() => {
       expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
     });
@@ -50,12 +48,7 @@ describe("MatchingGame component tests", () => {
   })
   //  isGameOver should be FALSE (win screen is hidden)
   it('does NOT render the win screen when not all cards are matched', async () => {
-    // ARRANGE
-    // Mock APIs to prevent errors during component creation
-
-    // Get the store instance that the component is using
     const gameStore = useGameStore();
-
     // To make isGameOver FALSE, set the underlying state so the lengths are NOT equal
     gameStore.cards = [{ code: 'AS' }, { code: 'QC' }]; // 3 cards total
     gameStore.cardsMatched = ['AS']; // Only 1 card matched
@@ -90,10 +83,7 @@ describe("MatchingGame component tests", () => {
   })
 
   it('should render the correct number of moves attempted', async () => {
-
     const gameStore = useGameStore();
-
-    // ASSERT initial values
     expect(gameStore.matchingAttempts).toBe(0);
 
     const moves = await screen.findByText('Moves: 0');
@@ -107,7 +97,6 @@ describe("MatchingGame component tests", () => {
     })
   })
   it('should render the proper number of matched cards', async () => {
-
     const gameStore = useGameStore();
     // ASSERT INITIAL STATE
     expect(gameStore.cardsMatched.length).toBe(0)
@@ -117,10 +106,8 @@ describe("MatchingGame component tests", () => {
     gameStore.addMatchingCards(['KD', 'KS'])
     const cardsMatched2 = await screen.findByText(/Cards Matched: 2\//i)
     expect(cardsMatched2).toBeInTheDocument()
-
   })
 
-  // Refactored Playing Card tests
   it('The number of cards in the cards array should be the same as the number rendered on the screen.', async () => {
     const gameStore = useGameStore();
     gameStore.cards = generateCards(24);
@@ -148,14 +135,87 @@ describe("MatchingGame component tests", () => {
     matchedCards.forEach((card) => {
       expect(card.parentElement).toHaveClass('opacity-0')
     })
+  });
+  describe('Difficulty Selection', () => {
+    it('when game state is "not started" difficulty options should be rendered on the screen', async () => {
+      const gameStore = useGameStore();
+      gameStore.gameState = 'not started';
+      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
+      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+
+      expect(diffEasy).toBeInTheDocument();
+      expect(diffMedium).toBeInTheDocument();
+      expect(diffHard).toBeInTheDocument();
+    })
+    it('when gameState is started, difficulty options should NOT be rendered on the screen', async () => {
+      const gameStore = useGameStore();
+      gameStore.gameState = 'started';
+      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
+      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+
+      expect(diffEasy).not.toBeInTheDocument();
+      expect(diffMedium).not.toBeInTheDocument();
+      expect(diffHard).not.toBeInTheDocument();
+    })
+    it('when gameState is finished, difficulty options should NOT be rendered on the screen', async () => {
+      const gameStore = useGameStore();
+      gameStore.gameState = 'finished';
+      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
+      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+
+      expect(diffEasy).not.toBeInTheDocument();
+      expect(diffMedium).not.toBeInTheDocument();
+      expect(diffHard).not.toBeInTheDocument();
+    })
+    it('when gameState is paused, difficulty options should NOT be rendered on the screen', async () => {
+      const gameStore = useGameStore();
+      gameStore.gameState = 'finished';
+      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
+      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+
+      expect(diffEasy).not.toBeInTheDocument();
+      expect(diffMedium).not.toBeInTheDocument();
+      expect(diffHard).not.toBeInTheDocument();
+    })
+    it('when easy button is pressed, gameState should be modified to "started"', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      const gameStore = useGameStore();
+      expect(gameStore.gameState).toEqual('not-started');
+
+      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
+      await user.click(diffEasy);
+      expect(gameStore.gameState).toEqual('started')
+    })
+    it('when medium button is pressed, gameState should be modified to "started"', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      const gameStore = useGameStore();
+      expect(gameStore.gameState).toEqual('not-started');
+
+      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
+      await user.click(diffMedium);
+      expect(gameStore.gameState).toEqual('started')
+    })
+    it('when hard button is pressed, gameState should be modified to "started"', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      const gameStore = useGameStore();
+      expect(gameStore.gameState).toEqual('not-started');
+
+      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+      await user.click(diffHard);
+      expect(gameStore.gameState).toEqual('started')
+    })
   })
 });
 
 const generateCards = (number) => {
   const cardCodes = []
-  while(cardCodes.length < number) {
+  while (cardCodes.length < number) {
     const pair = generateCardCodePair();
-    if(!cardCodes.includes(pair[0]) && !cardCodes.includes(pair[1])) {
+    if (!cardCodes.includes(pair[0]) && !cardCodes.includes(pair[1])) {
       cardCodes.push(...pair)
     }
   }
@@ -166,15 +226,43 @@ const generateCards = (number) => {
   return cards
 }
 
-const generateCardCodePair = () => {
-  const random = Math.random()
-
+export const generateCardCodePair = () => {
+  const CARDS_PER_SUITE = 13;
+  const random = Math.floor(Math.random() * 100) //random number between 0 and 100
+  let value;
+  for (let i = 0; i < CARDS_PER_SUITE; i++) {
+    let pipVal;
+    switch (i + 1) {
+      case 1:
+        pipVal = 'A'
+        break;
+      case 11:
+        pipVal = 'J'
+        break;
+      case 12:
+        pipVal = 'Q';
+        break;
+      case 13:
+        pipVal = 'K';
+        break;
+      default:
+        pipVal = i + 1
+        break;
+    }
+    if (random <= ((i + 1) / (CARDS_PER_SUITE)) * 100) {
+      value = pipVal;
+      break;
+    }
+  }
+  if (value === undefined) {
+    value = 'K'
+  }
   return [`${value}${randomSuit()}`, `${value}${randomSuit()}`]
 }
 
 const randomSuit = () => {
   const random = Math.random();
-  if(random < 0.25) {
+  if (random < 0.25) {
     return 'D'
   } else if (random < 0.5) {
     return 'C'
