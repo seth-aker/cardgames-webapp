@@ -140,9 +140,9 @@ describe("MatchingGame component tests", () => {
     it('when game state is "not started" difficulty options should be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'not started';
-      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
-      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
+      const diffHard = await screen.findByRole('button', { name: /Hard/i });
 
       expect(diffEasy).toBeInTheDocument();
       expect(diffMedium).toBeInTheDocument();
@@ -151,9 +151,9 @@ describe("MatchingGame component tests", () => {
     it('when gameState is started, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'started';
-      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
-      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
+      const diffHard = await screen.findByRole('button', { name: /Hard/i });
 
       expect(diffEasy).not.toBeInTheDocument();
       expect(diffMedium).not.toBeInTheDocument();
@@ -162,9 +162,9 @@ describe("MatchingGame component tests", () => {
     it('when gameState is finished, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'finished';
-      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
-      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
+      const diffHard = await screen.findByRole('button', { name: /Hard/i });
 
       expect(diffEasy).not.toBeInTheDocument();
       expect(diffMedium).not.toBeInTheDocument();
@@ -173,9 +173,9 @@ describe("MatchingGame component tests", () => {
     it('when gameState is paused, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'finished';
-      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
-      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
+      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
+      const diffHard = await screen.findByRole('button', { name: /Hard/i });
 
       expect(diffEasy).not.toBeInTheDocument();
       expect(diffMedium).not.toBeInTheDocument();
@@ -186,7 +186,7 @@ describe("MatchingGame component tests", () => {
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffEasy = await screen.findByRole('link', { name: /Easy/i });
+      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
       await user.click(diffEasy);
       expect(gameStore.gameState).toEqual('started')
     })
@@ -195,7 +195,7 @@ describe("MatchingGame component tests", () => {
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffMedium = await screen.findByRole('link', { name: /Medium/i });
+      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
       await user.click(diffMedium);
       expect(gameStore.gameState).toEqual('started')
     })
@@ -204,7 +204,7 @@ describe("MatchingGame component tests", () => {
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffHard = await screen.findByRole('link', { name: /Hard/i });
+      const diffHard = await screen.findByRole('button', { name: /Hard/i });
       await user.click(diffHard);
       expect(gameStore.gameState).toEqual('started')
     })
