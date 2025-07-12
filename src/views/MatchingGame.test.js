@@ -34,12 +34,14 @@ describe("MatchingGame component tests", () => {
     vi.useFakeTimers();
   })
   const mockDeckId = "1234"
+
   it("fetches a new deck and draws cards when created", async () => {
     const gameStore = useGameStore();
     gameStore.cards = [{ code: 'AC' }]
     // ASSERT
-    expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
+    gameStore.gameState = 'playing'
     await waitFor(() => {
+      expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
       expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
     });
 
@@ -139,10 +141,10 @@ describe("MatchingGame component tests", () => {
   describe('Difficulty Selection', () => {
     it('when game state is "not started" difficulty options should be rendered on the screen', async () => {
       const gameStore = useGameStore();
-      gameStore.gameState = 'not started';
-      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
-      const diffHard = await screen.findByRole('button', { name: /Hard/i });
+      gameStore.gameState = 'not-started';
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
       expect(diffEasy).toBeInTheDocument();
       expect(diffMedium).toBeInTheDocument();
@@ -150,63 +152,81 @@ describe("MatchingGame component tests", () => {
     })
     it('when gameState is started, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
-      gameStore.gameState = 'started';
-      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
-      const diffHard = await screen.findByRole('button', { name: /Hard/i });
+      gameStore.gameState = 'playing';
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
-      expect(diffEasy).not.toBeInTheDocument();
-      expect(diffMedium).not.toBeInTheDocument();
-      expect(diffHard).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(diffEasy).not.toBeInTheDocument();
+        expect(diffMedium).not.toBeInTheDocument();
+        expect(diffHard).not.toBeInTheDocument();
+      })
     })
     it('when gameState is finished, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'finished';
-      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
-      const diffHard = await screen.findByRole('button', { name: /Hard/i });
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
-      expect(diffEasy).not.toBeInTheDocument();
-      expect(diffMedium).not.toBeInTheDocument();
-      expect(diffHard).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(diffEasy).not.toBeInTheDocument();
+        expect(diffMedium).not.toBeInTheDocument();
+        expect(diffHard).not.toBeInTheDocument();
+      })
     })
     it('when gameState is paused, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
-      gameStore.gameState = 'finished';
-      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
-      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
-      const diffHard = await screen.findByRole('button', { name: /Hard/i });
+      gameStore.gameState = 'paused';
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i }, {});
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
-      expect(diffEasy).not.toBeInTheDocument();
-      expect(diffMedium).not.toBeInTheDocument();
-      expect(diffHard).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(diffEasy).not.toBeInTheDocument();
+        expect(diffMedium).not.toBeInTheDocument();
+        expect(diffHard).not.toBeInTheDocument();
+      })
     })
-    it('when easy button is pressed, gameState should be modified to "started"', async () => {
+    it('when easy button is pressed, gameState should be modified to "playing" and "createDeck" should be called', async () => {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffEasy = await screen.findByRole('button', { name: /Easy/i });
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
       await user.click(diffEasy);
-      expect(gameStore.gameState).toEqual('started')
+      expect(gameStore.gameState).toEqual('playing')
+      await waitFor(() => {
+        expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
+        expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
+      });
     })
-    it('when medium button is pressed, gameState should be modified to "started"', async () => {
+    it('when medium button is pressed, gameState should be modified to "playing" and "createDeck" should be called', async () => {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffMedium = await screen.findByRole('button', { name: /Medium/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
       await user.click(diffMedium);
-      expect(gameStore.gameState).toEqual('started')
+      expect(gameStore.gameState).toEqual('playing')
+      await waitFor(() => {
+        expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
+        expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
+      });
     })
-    it('when hard button is pressed, gameState should be modified to "started"', async () => {
+    it('when hard button is pressed, gameState should be modified to "playing" and "createDeck" should be called', async () => {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffHard = await screen.findByRole('button', { name: /Hard/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
       await user.click(diffHard);
-      expect(gameStore.gameState).toEqual('started')
+      expect(gameStore.gameState).toEqual('playing')
+      await waitFor(() => {
+        expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
+        expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
+      });
     })
   })
 });
