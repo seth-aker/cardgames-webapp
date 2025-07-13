@@ -128,9 +128,9 @@ describe("MatchingGame component tests", () => {
     it('when game state is "not started" difficulty options should be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'not-started';
-      const diffEasy = screen.queryByRole('link', { name: /Easy/i });
-      const diffMedium = screen.queryByRole('link', { name: /Medium/i });
-      const diffHard = screen.queryByRole('link', { name: /Hard/i });
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
       expect(diffEasy).toBeInTheDocument();
       expect(diffMedium).toBeInTheDocument();
@@ -139,9 +139,9 @@ describe("MatchingGame component tests", () => {
     it('when gameState is started, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'playing';
-      const diffEasy = screen.queryByRole('link', { name: /Easy/i });
-      const diffMedium = screen.queryByRole('link', { name: /Medium/i });
-      const diffHard = screen.queryByRole('link', { name: /Hard/i });
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
       await waitFor(() => {
         expect(diffEasy).not.toBeInTheDocument();
@@ -152,9 +152,9 @@ describe("MatchingGame component tests", () => {
     it('when gameState is finished, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'finished';
-      const diffEasy = screen.queryByRole('link', { name: /Easy/i });
-      const diffMedium = screen.queryByRole('link', { name: /Medium/i });
-      const diffHard = screen.queryByRole('link', { name: /Hard/i });
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
       await waitFor(() => {
         expect(diffEasy).not.toBeInTheDocument();
@@ -165,9 +165,9 @@ describe("MatchingGame component tests", () => {
     it('when gameState is paused, difficulty options should NOT be rendered on the screen', async () => {
       const gameStore = useGameStore();
       gameStore.gameState = 'paused';
-      const diffEasy = screen.queryByRole('link', { name: /Easy/i }, {});
-      const diffMedium = screen.queryByRole('link', { name: /Medium/i });
-      const diffHard = screen.queryByRole('link', { name: /Hard/i });
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i }, {});
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
 
       await waitFor(() => {
         expect(diffEasy).not.toBeInTheDocument();
@@ -180,7 +180,7 @@ describe("MatchingGame component tests", () => {
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffEasy = screen.queryByRole('link', { name: /Easy/i });
+      const diffEasy = screen.queryByRole('button', { name: /Easy/i });
       await user.click(diffEasy);
       expect(gameStore.gameState).toEqual('playing')
       await waitFor(() => {
@@ -193,7 +193,7 @@ describe("MatchingGame component tests", () => {
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffMedium = screen.queryByRole('link', { name: /Medium/i });
+      const diffMedium = screen.queryByRole('button', { name: /Medium/i });
       await user.click(diffMedium);
       expect(gameStore.gameState).toEqual('playing')
       await waitFor(() => {
@@ -206,7 +206,7 @@ describe("MatchingGame component tests", () => {
       const gameStore = useGameStore();
       expect(gameStore.gameState).toEqual('not-started');
 
-      const diffHard = screen.queryByRole('link', { name: /Hard/i });
+      const diffHard = screen.queryByRole('button', { name: /Hard/i });
       await user.click(diffHard);
       expect(gameStore.gameState).toEqual('playing')
       await waitFor(() => {
