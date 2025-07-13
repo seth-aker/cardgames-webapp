@@ -7,7 +7,8 @@
         <p class="xl:text-base text-xs">Moves: {{ gameStore.matchingAttempts }}</p>
       </span>
       <span class="xl:p-0 p-2 flex items-center">
-        <p class="xl:text-base text-xs">Cards Matched: {{ gameStore.cardsMatched.length }}/{{ gameStore.cards.length }}</p>
+        <p class="xl:text-base text-xs">Cards Matched: {{ gameStore.cardsMatched.length }}/{{ gameStore.cards.length }}
+        </p>
       </span>
       <span class="xl:p-0 p-2 flex items-center"><game-timer :isGameOver="gameStore.isGameOver" /></span>
       <span class="xl:p-0 p-2 flex items-center">
@@ -97,11 +98,6 @@ const getCards = async (deckId) => {
 onMounted(() => {
   gameStore.updatePageTitle(pageTitle)
   gameStore.clearMatching()
-
-  deckOfCardsAPI.createDeck(undefined, 'AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD').then((resp) => {
-    deckInfo.value = resp.data
-    getCards(resp.data.deck_id)
-  })
 })
 </script>
 
