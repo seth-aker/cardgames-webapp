@@ -51,6 +51,8 @@ describe("PauseButton component tests", () => {
     })
 
     it("pause button gets rendered inside of the MatchingGame component", async () => {
+        const gameStore = useGameStore();
+        gameStore.gameState = 'playing';
         const button = await screen.findByText(/^pause$/i);
         expect(button).toBeInTheDocument();
     })
@@ -58,6 +60,7 @@ describe("PauseButton component tests", () => {
     it('pause button stops game timer when pressed', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
         const gameStore = useGameStore();
+        gameStore.gameState = 'playing';
         vi.advanceTimersByTime(1000);
         expect(gameStore.gameTime).toBe("00:01");
         const button = await screen.findByText(/^pause$/i)
@@ -68,7 +71,8 @@ describe("PauseButton component tests", () => {
 
     it('pause menu is rendered when pause button is pressed', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
+        const gameStore = useGameStore();
+        gameStore.gameState = 'playing';
         await user.click(await screen.findByText(/^pause$/i));
         const pausedMenu = await screen.findByText(/paused/i)
         expect(pausedMenu).toBeInTheDocument();
@@ -76,7 +80,8 @@ describe("PauseButton component tests", () => {
 
     it('pause menu component has a "Resume" button', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
+        const gameStore = useGameStore();
+        gameStore.gameState = 'playing';
         await user.click(await screen.findByText(/^pause$/i));
 
         const resumeButton = await screen.findByText(/^resume$/i);
@@ -84,7 +89,8 @@ describe("PauseButton component tests", () => {
     })
     it('resumeButton closes the pause menu', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
+        const gameStore = useGameStore();
+        gameStore.gameState = 'playing';
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^resume$/i))
         const pauseMenu = screen.queryByText(/^paused$/i);
@@ -92,10 +98,9 @@ describe("PauseButton component tests", () => {
     })
     it('resumeButton resumes the game timer', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
-
         const gameStore = useGameStore();
         expect(gameStore.gameTime).toBe("00:00");
+        gameStore.gameState = 'playing';
 
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^resume$/i));
@@ -107,7 +112,8 @@ describe("PauseButton component tests", () => {
 
     it('pause menu component has a new game button', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
+        const gameStore = useGameStore();
+        gameStore.gameState = 'playing';
         await user.click(await screen.findByText(/^pause$/i));
         const resumeButton = await screen.findByText(/^new game$/i);
         expect(resumeButton).toBeInTheDocument();
@@ -115,13 +121,14 @@ describe("PauseButton component tests", () => {
     it('new game button clears the gameStore and resets the game.', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
         const gameStore = useGameStore();
+        gameStore.gameState = 'playing'
         const spy = vi.spyOn(gameStore, 'clearMatching')
 
         gameStore.cards = [{ code: 'AC' }, { code: 'AH' }, { code: 'KC' }, { code: 'KD' }];
         gameStore.gameTime = '01:30';
         gameStore.matchingAttempts = 20;
-        gameStore.cardsShowing = [{ code: 'AC' }],
-            gameStore.cardsMatched = [{ code: '2H' }, { code: '2D' }]
+        gameStore.cardsShowing = [{ code: 'AC' }];
+        gameStore.cardsMatched = [{ code: '2H' }, { code: '2D' }]
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^new game$/i));
 
@@ -131,15 +138,12 @@ describe("PauseButton component tests", () => {
         expect(gameStore.cardsMatched).toEqual([]);
         expect(gameStore.matchingAttempts).toBe(0);
         expect(gameStore.gameTime).toBe("00:00");
-
-        expect(deckOfCardsAPI.createDeck).toHaveBeenCalledTimes(1);
-        await waitFor(() => {
-            expect(deckOfCardsAPI.drawCard).toHaveBeenCalledWith(mockDeckId);
-        });
+        expect(gameStore.gameState).toEqual('not-started')
     })
     it('new game button closes the pause menu', async () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-
+        const gameStore = useGameStore();
+        gameStore.gameState = 'playing';
         await user.click(await screen.findByText(/^pause$/i));
         await user.click(await screen.findByText(/^new game$/i))
         const pauseMenu = screen.queryByText(/^paused$/i);
