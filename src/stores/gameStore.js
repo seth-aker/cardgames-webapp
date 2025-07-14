@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import deckOfCardsAPI from '../services/deckOfCardsAPI'
+import { shuffleArray } from '../utils/shuffleArray'
 
 export const useGameStore = defineStore('game', {
   state: () => ({
@@ -9,7 +10,8 @@ export const useGameStore = defineStore('game', {
     cardsMatched: [],
     matchingAttempts: 0,
     gameTime: '00:00',
-    gameState: 'not-started' // 'not-started' | 'playing' | 'finished' | 'paused'
+    gameState: 'not-started', // 'not-started' | 'playing' | 'finished' | 'paused',
+    difficulty: 'medium'
   }),
 
   getters: {
@@ -20,9 +22,7 @@ export const useGameStore = defineStore('game', {
         return false
       }
     },
-    isPaused: (state) => {
-      return state.gameState === 'paused'
-    }
+    isPaused: (state) => state.gameState === 'paused'
   },
 
   actions: {
@@ -69,9 +69,37 @@ export const useGameStore = defineStore('game', {
     resumeGame() {
       this.gameState = 'playing'
     },
-    async startNewGame(difficulty) {
-      const cards = 'AS,AC,KH,KD,3S,3C,4H,4D,5S,5C,6H,6D,7S,7C,8H,8D,9S,9C,0H,0D,JS,JC,QH,QD'
-      const res = deckOfCardsAPI.createDeck(undefined,)
+    async getCards(deckId) {
+      const response = await deckOfCardsAPI.drawCard(deckId)
+      if (response.data.remaining >= 0) {
+        this.addCard(response.data.cards)
+        if (response.data.remaining > 0)
+          this.getCards(deckId)
+      }
+    },
+    startNewGame(difficulty) {
+      this.difficulty = difficulty;
+      let cardPairs = ['AD,AH', 'AS,AC', '2D,2H', '2S,2C', '3D,3H', '3S,3C', '4D,4H', '4C,4S', '5H,5D', '5S,5C', '6H,6D', '6S,6C', '7H,7D', '7S,7C', '8H,8D', '8S,8C', '9H,9D', '9S,9C', '10D,10H', '10S,10C', 'JH,JD', 'JS,JC', 'QH,QD', 'QS,QC', 'KD,KH', 'KS,KC']
+      shuffleArray(cardPairs);
+      switch (difficulty) {
+        case 'easy':
+          cardPairs = cardPairs.slice(0, 12)
+          break;
+        case 'medium':
+          cardPairs = cardPairs.slice(0, 18)
+          break;
+        case 'hard':
+        default:
+          cardPairs = cardPairs.slice(0, 24)
+          break;
+      }
+      deckOfCardsAPI.createDeck(undefined, cardPairs.join(',')).then((res) => {
+        if (!res.data.deck_id) {
+          throw new Error('An error occured fetching deck of cards')
+        }
+        this.getCards(res.data.deck_id);
+      })
+      this.gameState = 'playing'
     }
   }
 })

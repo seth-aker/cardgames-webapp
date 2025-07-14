@@ -5,8 +5,8 @@
       <p>Moves taken: {{ gameStore.matchingAttempts }}</p>
       <p>Time elapsed: {{ gameStore.gameTime }}</p>
       <p><a @click="resumeGame"
-          class="text-white no-underline border-2 border-white rounded-xl py-2 px-3 my-2 cursor-pointer block hover:bg-green-500 hover:border-white/25">Resume
-          Game</a></p>
+          class="text-white no-underline border-2 border-white rounded-xl py-2 px-3 my-2 cursor-pointer block hover:bg-green-500 hover:border-white/25">Resume</a>
+      </p>
       <p><a @click="startNewGame"
           class="text-white no-underline border-2 border-white rounded-xl py-2 px-3 my-2 cursor-pointer block hover:bg-green-500 hover:border-white/25">New
           Game</a></p>
@@ -30,7 +30,6 @@ const resumeGame = () => {
 
 const startNewGame = () => {
   gameStore.clearMatching();
-  gameStore.resumeGame();
   router.go();
 };
 </script>
