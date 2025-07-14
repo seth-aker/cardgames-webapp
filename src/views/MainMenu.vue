@@ -9,7 +9,7 @@
                         @click="toggleNewGameActive">New Game</button>
 
                     <div class="dropdown-content flex flex-col px-5 bg-inherit w-80" :class="{ active: newGameActive }">
-                        <router-link :to="{ name: 'matching' }" @click="$store.commit('CLEAR_MATCHING')"
+                        <router-link :to="{ name: 'matching' }"
                             class="text-white no-underline p-4 hover:bg-green-400 rounded-xl">Matching</router-link>
                         <router-link :to="{ name: 'blackjack' }"
                             class="text-white no-underline p-4 hover:bg-green-400 rounded-xl">Blackjack</router-link>
