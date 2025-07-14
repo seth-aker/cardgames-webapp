@@ -12,10 +12,8 @@
       </span>
       <span class="xl:p-0 p-2 flex items-center"><game-timer /></span>
       <span class="xl:p-0 p-2 flex items-center">
-        <button @click="gameStore.togglePause()"
-          class="bg-green-600 text-white border-none rounded px-4 py-2 cursor-pointer my-2 hover:bg-green-500">
-          {{ gameStore.isPaused ? 'Resume' : 'Pause' }}
-        </button>
+        <button @click="gameStore.togglePause()" :disabled="gameStore.gameState === 'paused'"
+          class="bg-green-600 text-white border-none rounded px-4 py-2 cursor-pointer my-2 hover:bg-green-500">Pause</button>
       </span>
     </aside>
     <main class="xl:w-[calc(100vw-10rem)] grid gap-1 w-full justify-items-center h-full overflow-hidden p-2"

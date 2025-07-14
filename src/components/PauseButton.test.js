@@ -1,6 +1,6 @@
 
 import { beforeEach, describe, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/vue';
+import { render, screen } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event'
 import { createPinia, setActivePinia } from 'pinia';
 import { useGameStore } from '../stores/gameStore';
@@ -43,11 +43,21 @@ describe("PauseButton component tests", () => {
         });
         render(MatchingGame, {
             global: {
-                plugins: [createPinia()]
-            }
+                plugins: [createPinia()],
+                stubs: {
+                    'router-link': {
+                        template: '<a><slot /></a>',
+                        props: ['to']
+                    }
+                }
+            },
+            
         })
 
         vi.useFakeTimers()
+    })
+    afterEach(() => {
+        vi.restoreAllMocks();
     })
 
     it("pause button gets rendered inside of the MatchingGame component", async () => {
@@ -61,12 +71,16 @@ describe("PauseButton component tests", () => {
         const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
         const gameStore = useGameStore();
         gameStore.gameState = 'playing';
-        vi.advanceTimersByTime(1000);
-        expect(gameStore.gameTime).toBe("00:01");
+        await vi.waitFor(() => {
+            vi.advanceTimersByTime(1000);
+            expect(gameStore.gameTime).toBe("00:01");
+        })
         const button = await screen.findByText(/^pause$/i)
         await user.click(button)
-        vi.advanceTimersByTime(5000);
-        expect(gameStore.gameTime).toBe("00:01");
+        await vi.waitFor(() => {
+            vi.advanceTimersByTime(5000);
+            expect(gameStore.gameTime).toBe("00:01");
+        })
     })
 
     it('pause menu is rendered when pause button is pressed', async () => {
@@ -124,7 +138,7 @@ describe("PauseButton component tests", () => {
         gameStore.gameState = 'playing'
         const spy = vi.spyOn(gameStore, 'clearMatching')
 
-        gameStore.cards = [{ code: 'AC' }, { code: 'AH' }, { code: 'KC' }, { code: 'KD' }];
+        gameStore.cards = [{ code: 'AC', image: 'img' }, { code: 'AH', image: 'img' }, { code: 'KC', image: 'img' }, { code: 'KD', image: 'img' }];
         gameStore.gameTime = '01:30';
         gameStore.matchingAttempts = 20;
         gameStore.cardsShowing = [{ code: 'AC' }];
