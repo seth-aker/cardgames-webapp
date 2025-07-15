@@ -19,10 +19,10 @@
 
 <script setup>
 import { useGameStore } from '@/stores/gameStore.js';
-import { useRouter } from 'vue-router';
+// import { useRouter } from 'vue-router';
 
 const gameStore = useGameStore();
-const router = useRouter();
+// const router = useRouter();
 
 const resumeGame = () => {
   gameStore.resumeGame();
@@ -30,7 +30,7 @@ const resumeGame = () => {
 
 const startNewGame = () => {
   gameStore.clearMatching();
-  router.go();
+  
 };
 </script>
 

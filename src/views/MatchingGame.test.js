@@ -29,6 +29,12 @@ describe("MatchingGame component tests", () => {
     render(MatchingGame, {
       global: {
         plugins: [createPinia()],
+        stubs: {
+          'router-link': {
+            template: '<a><slot /></a>',
+            props: ['to']
+          }
+        }
       },
     });
     vi.useFakeTimers();
@@ -38,7 +44,7 @@ describe("MatchingGame component tests", () => {
   it('does NOT render the win screen when not all cards are matched', async () => {
     const gameStore = useGameStore();
     // To make isGameOver FALSE, set the underlying state so the lengths are NOT equal
-    gameStore.cards = [{ code: 'AS' }, { code: 'QC' }]; // 3 cards total
+    gameStore.cards = [{ code: 'AS', image: 'image' }, { code: 'QC', image: 'image' }]; // 3 cards total
     gameStore.cardsMatched = ['AS']; // Only 1 card matched
 
     // ASSERT
@@ -58,7 +64,7 @@ describe("MatchingGame component tests", () => {
     const gameStore = useGameStore();
 
 
-    gameStore.cards = [{ code: "AS" }, { code: "KD" }];
+    gameStore.cards = [{ code: "AS", image: 'image' }, { code: "KD" , image: 'image'}];
     gameStore.cardsMatched = ['AS', 'KD'];
 
     // ASSERT
